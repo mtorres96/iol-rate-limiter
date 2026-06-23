@@ -44,7 +44,7 @@ Requirements for the challenge deliverable. Each maps to roadmap phases.
 
 ### Testing
 
-- [ ] **TEST-01**: Comprehensive Vitest unit tests for all three algorithms (refill, burst, window rollover, cost, exact-limit boundary) using `FakeClock`, no real sleeps
+- [x] **TEST-01**: Comprehensive Vitest unit tests for all three algorithms (refill, burst, window rollover, cost, exact-limit boundary) using `FakeClock`, no real sleeps
 - [ ] **TEST-02**: A shared conformance test suite runs identical `(key, cost, now)` sequences against both stores and asserts identical `Decision`s
 - [ ] **TEST-03**: Integration tests run the Redis store against a real Redis via `@testcontainers/redis`
 - [ ] **TEST-04**: A concurrency test proves a burst of concurrent requests admits exactly `limit` (over-admission guard), against both memory and real Redis
@@ -113,7 +113,7 @@ Which phases cover which requirements. Populated during roadmap creation.
 | HTTP-02 | Phase 3 | Pending |
 | HTTP-03 | Phase 3 | Pending |
 | HTTP-04 | Phase 3 | Pending |
-| TEST-01 | Phase 1 | Pending |
+| TEST-01 | Phase 1 | Complete |
 | TEST-02 | Phase 2 | Pending |
 | TEST-03 | Phase 2 | Pending |
 | TEST-04 | Phase 2 | Pending |

@@ -13,7 +13,7 @@ A distributed rate limiter built inside-out: contracts and correctness first, di
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Core, Algorithms & In-Memory Reference** - Narrow interfaces + three correct algorithms proven against an in-memory store with FakeClock
+- [x] **Phase 1: Core, Algorithms & In-Memory Reference** - Narrow interfaces + three correct algorithms proven against an in-memory store with FakeClock (completed 2026-06-23)
 - [ ] **Phase 2: Conformance Harness, Redis/Lua Store & Defensive Behavior** - Shared conformance suite + atomic-Lua Redis store with timeouts and fail-open/closed, proven against real Redis
 - [ ] **Phase 3: Express Middleware & HTTP Semantics** - Per-key enforcement middleware with standards-correct headers, 429/Retry-After, and async error handling
 - [ ] **Phase 4: Demo, Docker & DESIGN.md** - One-command deployable demo + graded architecture/AI-usage documentation behind the final verification gate
@@ -49,7 +49,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 01-04-PLAN.md — Deterministic FakeClock test suites (TB/SW/FW) + exact-limit concurrency over-admission guard
+- [x] 01-04-PLAN.md — Deterministic FakeClock test suites (TB/SW/FW) + exact-limit concurrency over-admission guard
 
 ### Phase 2: Conformance Harness, Redis/Lua Store & Defensive Behavior
 
@@ -103,7 +103,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Core, Algorithms & In-Memory Reference | 3/4 | In Progress|  |
+| 1. Core, Algorithms & In-Memory Reference | 4/4 | Complete   | 2026-06-23 |
 | 2. Conformance, Redis/Lua & Defensive Behavior | 0/TBD | Not started | - |
 | 3. Express Middleware & HTTP Semantics | 0/TBD | Not started | - |
 | 4. Demo, Docker & DESIGN.md | 0/TBD | Not started | - |
