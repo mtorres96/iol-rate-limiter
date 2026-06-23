@@ -93,13 +93,43 @@ Which phases cover which requirements. Populated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (to be filled by roadmapper) | | Pending |
+| CORE-01 | Phase 1 | Pending |
+| CORE-02 | Phase 1 | Pending |
+| CORE-03 | Phase 1 | Pending |
+| CORE-04 | Phase 1 | Pending |
+| CORE-05 | Phase 1 | Pending |
+| ALGO-01 | Phase 1 | Pending |
+| ALGO-02 | Phase 1 | Pending |
+| ALGO-03 | Phase 1 | Pending |
+| ALGO-04 | Phase 1 | Pending |
+| STOR-01 | Phase 1 | Pending |
+| STOR-02 | Phase 2 | Pending |
+| STOR-03 | Phase 2 | Pending |
+| STOR-04 | Phase 2 | Pending |
+| STOR-05 | Phase 2 | Pending |
+| DEF-01 | Phase 2 | Pending |
+| DEF-02 | Phase 2 | Pending |
+| HTTP-01 | Phase 3 | Pending |
+| HTTP-02 | Phase 3 | Pending |
+| HTTP-03 | Phase 3 | Pending |
+| HTTP-04 | Phase 3 | Pending |
+| TEST-01 | Phase 1 | Pending |
+| TEST-02 | Phase 2 | Pending |
+| TEST-03 | Phase 2 | Pending |
+| TEST-04 | Phase 2 | Pending |
+| TEST-05 | Phase 2 | Pending |
+| DELIV-01 | Phase 4 | Pending |
+| DELIV-02 | Phase 4 | Pending |
+| DELIV-03 | Phase 4 | Pending |
+| DELIV-04 | Phase 4 | Pending |
+| DELIV-05 | Phase 1 | Pending |
+| DELIV-06 | Phase 4 | Pending |
 
 **Coverage:**
-- v1 requirements: 28 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 28 ⚠️
+- v1 requirements: 31 total
+- Mapped to phases: 31 (100%)
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-06-23*
-*Last updated: 2026-06-23 after initial definition*
+*Last updated: 2026-06-23 after roadmap creation*
