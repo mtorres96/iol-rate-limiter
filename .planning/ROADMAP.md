@@ -41,7 +41,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 01-02-PLAN.md — Core contracts (RateLimiter/Decision/Store/Clock/configs/OpTuple) + injectable Clock & FakeClock
+- [x] 01-02-PLAN.md — Core contracts (RateLimiter/Decision/Store/Clock/configs/OpTuple) + injectable Clock & FakeClock
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -103,7 +103,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Core, Algorithms & In-Memory Reference | 1/4 | In Progress|  |
+| 1. Core, Algorithms & In-Memory Reference | 2/4 | In Progress|  |
 | 2. Conformance, Redis/Lua & Defensive Behavior | 0/TBD | Not started | - |
 | 3. Express Middleware & HTTP Semantics | 0/TBD | Not started | - |
 | 4. Demo, Docker & DESIGN.md | 0/TBD | Not started | - |

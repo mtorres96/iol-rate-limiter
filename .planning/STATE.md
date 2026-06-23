@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 1 context gathered
-last_updated: "2026-06-23T23:09:42.457Z"
+stopped_at: Completed 01-02-PLAN.md
+last_updated: "2026-06-23T23:13:49.627Z"
 last_activity: 2026-06-23
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 4
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-06-23)
 ## Current Position
 
 Phase: 01 (core-algorithms-in-memory-reference) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 Status: Ready to execute
 Last activity: 2026-06-23
 
-Progress: [███░░░░░░░] 25%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Progress: [███░░░░░░░] 25%
 
 *Updated after each plan completion*
 | Phase 01 P01 | 2 | 2 tasks | 10 files |
+| Phase 01 P02 | 1 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -66,6 +67,8 @@ Recent decisions affecting current work:
 - Roadmap: Express adapter (Phase 3) depends only on the RateLimiter interface — parallelizable after Phase 1, no Redis needed.
 - [Phase 01]: Pinned @vitest/coverage-v8 to exact 4.1.9 (not caret) — peer range is exact vitest version
 - [Phase 01]: tsconfig noEmit:true makes tsc the type-gate; tsup owns emit (avoids dual-emit mismatch)
+- [Phase 01]: Core contracts authored interface-first in src/types.ts; Store exposes 3 algorithm-shaped ops returning OpTuple (no generic get/set, no Decision-returning op)
+- [Phase 01]: OpTuple is the integer-ms op boundary; fractional token state stays inside the store (D-09); FakeClock is hand-rolled with tick/setTime and no real timers
 
 ### Pending Todos
 
@@ -85,6 +88,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-23T23:09:17.797Z
-Stopped at: Phase 1 context gathered
+Last session: 2026-06-23T23:13:49.364Z
+Stopped at: Completed 01-02-PLAN.md
 Resume file: None

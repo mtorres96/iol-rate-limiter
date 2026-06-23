@@ -9,11 +9,11 @@ Requirements for the challenge deliverable. Each maps to roadmap phases.
 
 ### Core Contracts
 
-- [ ] **CORE-01**: A `RateLimiter` interface exposes `consume(key, cost?) -> Promise<Decision>` as the single decision verb
-- [ ] **CORE-02**: A structured `Decision` type reports `allowed`, `limit`, `remaining`, `resetMs`, and `retryAfterMs`
-- [ ] **CORE-03**: An injectable `Clock` provides `now()`, with a `FakeClock` for deterministic time-based tests
-- [ ] **CORE-04**: A `Store` interface exposes one atomic operation per algorithm (algorithm-shaped, not generic get/set)
-- [ ] **CORE-05**: Request identity (key) is opaque to the core — IP/API-key/user extraction lives only in the adapter
+- [x] **CORE-01**: A `RateLimiter` interface exposes `consume(key, cost?) -> Promise<Decision>` as the single decision verb
+- [x] **CORE-02**: A structured `Decision` type reports `allowed`, `limit`, `remaining`, `resetMs`, and `retryAfterMs`
+- [x] **CORE-03**: An injectable `Clock` provides `now()`, with a `FakeClock` for deterministic time-based tests
+- [x] **CORE-04**: A `Store` interface exposes one atomic operation per algorithm (algorithm-shaped, not generic get/set)
+- [x] **CORE-05**: Request identity (key) is opaque to the core — IP/API-key/user extraction lives only in the adapter
 
 ### Algorithms
 
@@ -93,11 +93,11 @@ Which phases cover which requirements. Populated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CORE-01 | Phase 1 | Pending |
-| CORE-02 | Phase 1 | Pending |
-| CORE-03 | Phase 1 | Pending |
-| CORE-04 | Phase 1 | Pending |
-| CORE-05 | Phase 1 | Pending |
+| CORE-01 | Phase 1 | Complete |
+| CORE-02 | Phase 1 | Complete |
+| CORE-03 | Phase 1 | Complete |
+| CORE-04 | Phase 1 | Complete |
+| CORE-05 | Phase 1 | Complete |
 | ALGO-01 | Phase 1 | Pending |
 | ALGO-02 | Phase 1 | Pending |
 | ALGO-03 | Phase 1 | Pending |
