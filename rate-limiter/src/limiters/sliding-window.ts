@@ -6,6 +6,7 @@
 
 import { SystemClock } from "../clock.js";
 import type { Clock, Decision, RateLimiter, Store, WindowConfig } from "../types.js";
+import { assertCost, assertPositiveConfig } from "../validate.js";
 
 export class SlidingWindowLimiter implements RateLimiter {
   constructor(
@@ -14,11 +15,14 @@ export class SlidingWindowLimiter implements RateLimiter {
     private readonly clock: Clock = SystemClock,
   ) {
     // Validate config at construction (T-01-06).
-    assertPositive("limit", cfg.limit);
-    assertPositive("windowMs", cfg.windowMs);
+    assertPositiveConfig("SlidingWindowLimiter", "limit", cfg.limit);
+    assertPositiveConfig("SlidingWindowLimiter", "windowMs", cfg.windowMs);
   }
 
   async consume(key: string, cost = 1): Promise<Decision> {
+    // Reject non-positive-integer / non-finite `cost` BEFORE any store op runs
+    // (CR-01/CR-02/WR-02): an unvalidated cost frees window allowance or leaks NaN.
+    assertCost(cost);
     const [allowed, remaining, resetMs, retryAfterMs] = this.store.slidingWindow(
       key,
       this.cfg,
@@ -32,12 +36,5 @@ export class SlidingWindowLimiter implements RateLimiter {
       resetMs,
       retryAfterMs,
     };
-  }
-}
-
-/** Throw a clear `RangeError` for any non-positive / NaN / non-finite config value. */
-function assertPositive(name: string, value: number): void {
-  if (!Number.isFinite(value) || value <= 0) {
-    throw new RangeError(`SlidingWindowLimiter: \`${name}\` must be a positive finite number, got ${value}`);
   }
 }

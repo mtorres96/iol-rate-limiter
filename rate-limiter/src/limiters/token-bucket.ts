@@ -6,6 +6,7 @@
 
 import { SystemClock } from "../clock.js";
 import type { Clock, Decision, RateLimiter, Store, TBConfig } from "../types.js";
+import { assertCost, assertPositiveConfig } from "../validate.js";
 
 export class TokenBucketLimiter implements RateLimiter {
   constructor(
@@ -15,14 +16,17 @@ export class TokenBucketLimiter implements RateLimiter {
   ) {
     // Validate config at construction (T-01-06): reject non-positive / NaN /
     // non-finite numerics before any op can run with garbage state.
-    assertPositive("capacity", cfg.capacity);
-    assertPositive("refillPerInterval", cfg.refillPerInterval);
-    assertPositive("intervalMs", cfg.intervalMs);
+    assertPositiveConfig("TokenBucketLimiter", "capacity", cfg.capacity);
+    assertPositiveConfig("TokenBucketLimiter", "refillPerInterval", cfg.refillPerInterval);
+    assertPositiveConfig("TokenBucketLimiter", "intervalMs", cfg.intervalMs);
   }
 
   // `async` only to satisfy `Promise<Decision>` (CORE-01); the memory store
   // resolves synchronously. `cost` defaults to 1.
   async consume(key: string, cost = 1): Promise<Decision> {
+    // Reject non-positive-integer / non-finite `cost` BEFORE any store op runs
+    // (CR-01/CR-02/WR-02): an unvalidated cost corrupts bucket state or leaks NaN.
+    assertCost(cost);
     const [allowed, remaining, resetMs, retryAfterMs] = this.store.tokenBucket(
       key,
       this.cfg,
@@ -36,12 +40,5 @@ export class TokenBucketLimiter implements RateLimiter {
       resetMs,
       retryAfterMs,
     };
-  }
-}
-
-/** Throw a clear `RangeError` for any non-positive / NaN / non-finite config value. */
-function assertPositive(name: string, value: number): void {
-  if (!Number.isFinite(value) || value <= 0) {
-    throw new RangeError(`TokenBucketLimiter: \`${name}\` must be a positive finite number, got ${value}`);
   }
 }
