@@ -401,20 +401,22 @@ test("Xu Ch.4 sliding window example: limit=7, prev=5, curr=3, 50% in → admit"
 
 **Note:** A1/A2 are the only decisions a planner should surface for confirmation — both are about *exact rounding/formula encoding* that Phase-2 conformance depends on. Everything else is verified or locked.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Exact rounding direction for `resetMs`/`retryAfterMs` (ceil assumed).**
-   - What we know: D-04 floors `remaining`; D-09 mandates integer ms at the boundary.
-   - What's unclear: CONTEXT doesn't explicitly state ceil vs round for the two duration fields.
-   - Recommendation: Lock `Math.ceil` (never under-report wait time) in the plan, comment it in the op, and make TEST-01 assert exact integer values so Phase-2 Lua has a precise target. (See A2.)
+All three questions were resolved during planning and the answers are locked into the Phase 1 plans (01-03, 01-04). Retained here for traceability.
 
-2. **Whether to also write a no-op `SystemClock` test / default-clock path now.**
-   - What we know: Production needs `SystemClock` (Date.now); tests use `FakeClock`.
-   - What's unclear: Phase 1 has no runtime consumer of `SystemClock` (the demo server is Phase 4).
-   - Recommendation: Ship `SystemClock` as the default constructor arg (so limiters are usable without passing a clock) but don't test wall-clock behavior — only the injected `FakeClock` path is asserted. Cheap and forward-compatible.
+1. **Exact rounding direction for `resetMs`/`retryAfterMs` (ceil assumed).** — **RESOLVED**
+   - What we knew: D-04 floors `remaining`; D-09 mandates integer ms at the boundary.
+   - What was unclear: CONTEXT didn't explicitly state ceil vs round for the two duration fields.
+   - **Resolution:** Lock `Math.ceil` for `resetMs`/`retryAfterMs` (never under-report wait time) and `Math.floor` for `remaining`, commented in the op for Lua parity, with TEST-01 asserting exact integer values so Phase-2 Lua has a precise conformance target. Encoded in plan 01-03 Task 1 and asserted in 01-04 Task 1. (See A2.)
 
-3. **`test/` separate vs `src` colocated.**
-   - Recommendation: Use a separate `test/` dir (cleaner `src`, simpler `tsup` entry); discretionary — let the planner pick and stay consistent.
+2. **Whether to also write a no-op `SystemClock` test / default-clock path now.** — **RESOLVED**
+   - What we knew: Production needs `SystemClock` (Date.now); tests use `FakeClock`.
+   - What was unclear: Phase 1 has no runtime consumer of `SystemClock` (the demo server is Phase 4).
+   - **Resolution:** Ship `SystemClock` as the default constructor arg (so limiters are usable without passing a clock) but do NOT test wall-clock behavior — only the injected `FakeClock` path is asserted. Encoded in plan 01-02 (SystemClock default) and 01-04 (FakeClock-only test path).
+
+3. **`test/` separate vs `src` colocated.** — **RESOLVED**
+   - **Resolution:** Use a separate `test/` directory (cleaner `src`, simpler `tsup` entry). All test files live under `rate-limiter/test/` per plan 01-04.
 
 ## Environment Availability
 
