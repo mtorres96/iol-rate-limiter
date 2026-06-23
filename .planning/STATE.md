@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-02-PLAN.md
-last_updated: "2026-06-23T23:13:49.627Z"
+stopped_at: Completed 01-03-PLAN.md
+last_updated: "2026-06-23T23:18:24.000Z"
 last_activity: 2026-06-23
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 4
-  completed_plans: 2
+  completed_plans: 3
   percent: 0
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-06-23)
 ## Current Position
 
 Phase: 01 (core-algorithms-in-memory-reference) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 Status: Ready to execute
 Last activity: 2026-06-23
 
-Progress: [█████░░░░░] 50%
+Progress: [████████░░] 75%
 
 ## Performance Metrics
 
@@ -54,6 +54,7 @@ Progress: [█████░░░░░] 50%
 *Updated after each plan completion*
 | Phase 01 P01 | 2 | 2 tasks | 10 files |
 | Phase 01 P02 | 1 | 2 tasks | 2 files |
+| Phase 01 P03 | 3 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -69,6 +70,9 @@ Recent decisions affecting current work:
 - [Phase 01]: tsconfig noEmit:true makes tsc the type-gate; tsup owns emit (avoids dual-emit mismatch)
 - [Phase 01]: Core contracts authored interface-first in src/types.ts; Store exposes 3 algorithm-shaped ops returning OpTuple (no generic get/set, no Decision-returning op)
 - [Phase 01]: OpTuple is the integer-ms op boundary; fractional token state stays inside the store (D-09); FakeClock is hand-rolled with tick/setTime and no real timers
+- [Phase 01]: MemoryStore is the human-readable reference impl — algorithm math lives inside each op (D-06), every op is one synchronous read-modify-write (event-loop atomicity, no mutex), rounding contract pinned in comments for Lua parity
+- [Phase 01]: Three thin limiters wrap the matching store op and assemble Decision (D-07/D-12); config validated at construction (RangeError on non-positive/NaN/non-finite, T-01-06)
+- [Phase 01]: Sliding-window retryAfterMs is best-effort (boundary when curr alone over-limit; else previous-window linear decay, clamped)
 
 ### Pending Todos
 
@@ -88,6 +92,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-23T23:13:49.364Z
-Stopped at: Completed 01-02-PLAN.md
+Last session: 2026-06-23T23:18:24.000Z
+Stopped at: Completed 01-03-PLAN.md
 Resume file: None

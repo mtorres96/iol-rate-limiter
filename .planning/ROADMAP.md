@@ -45,7 +45,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 01-03-PLAN.md — MemoryStore three algorithm ops + three interchangeable thin limiters + public barrel
+- [x] 01-03-PLAN.md — MemoryStore three algorithm ops + three interchangeable thin limiters + public barrel
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
@@ -103,7 +103,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Core, Algorithms & In-Memory Reference | 2/4 | In Progress|  |
+| 1. Core, Algorithms & In-Memory Reference | 3/4 | In Progress|  |
 | 2. Conformance, Redis/Lua & Defensive Behavior | 0/TBD | Not started | - |
 | 3. Express Middleware & HTTP Semantics | 0/TBD | Not started | - |
 | 4. Demo, Docker & DESIGN.md | 0/TBD | Not started | - |

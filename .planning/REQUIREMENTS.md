@@ -17,14 +17,14 @@ Requirements for the challenge deliverable. Each maps to roadmap phases.
 
 ### Algorithms
 
-- [ ] **ALGO-01**: Token Bucket limiter — capacity + refill rate, lazy refill computed as a pure function of `(lastRefill, tokens, now)`, supports request cost
-- [ ] **ALGO-02**: Sliding Window Counter limiter — weights the previous window by its remaining fraction (formula pinned with a worked numeric example)
-- [ ] **ALGO-03**: Fixed Window Counter limiter — baseline implementation that knowingly exhibits and documents the window-boundary burst
-- [ ] **ALGO-04**: All three algorithms are interchangeable behind the `RateLimiter` interface
+- [x] **ALGO-01**: Token Bucket limiter — capacity + refill rate, lazy refill computed as a pure function of `(lastRefill, tokens, now)`, supports request cost
+- [x] **ALGO-02**: Sliding Window Counter limiter — weights the previous window by its remaining fraction (formula pinned with a worked numeric example)
+- [x] **ALGO-03**: Fixed Window Counter limiter — baseline implementation that knowingly exhibits and documents the window-boundary burst
+- [x] **ALGO-04**: All three algorithms are interchangeable behind the `RateLimiter` interface
 
 ### Storage
 
-- [ ] **STOR-01**: In-memory `Store` implementation (single-node, atomic via the Node event loop) used as the readable reference and by unit tests
+- [x] **STOR-01**: In-memory `Store` implementation (single-node, atomic via the Node event loop) used as the readable reference and by unit tests
 - [ ] **STOR-02**: Redis `Store` implementation executing each algorithm's state mutation inside a single atomic Lua script
 - [ ] **STOR-03**: Redis scripts receive `now` as an argument (never `redis.call('TIME')`) and set key TTL/expiry inside the script
 - [ ] **STOR-04**: Lua scripts are registered via ioredis `defineCommand` (auto-EVALSHA with NOSCRIPT fallback), using a shared single ioredis client
@@ -98,11 +98,11 @@ Which phases cover which requirements. Populated during roadmap creation.
 | CORE-03 | Phase 1 | Complete |
 | CORE-04 | Phase 1 | Complete |
 | CORE-05 | Phase 1 | Complete |
-| ALGO-01 | Phase 1 | Pending |
-| ALGO-02 | Phase 1 | Pending |
-| ALGO-03 | Phase 1 | Pending |
-| ALGO-04 | Phase 1 | Pending |
-| STOR-01 | Phase 1 | Pending |
+| ALGO-01 | Phase 1 | Complete |
+| ALGO-02 | Phase 1 | Complete |
+| ALGO-03 | Phase 1 | Complete |
+| ALGO-04 | Phase 1 | Complete |
+| STOR-01 | Phase 1 | Complete |
 | STOR-02 | Phase 2 | Pending |
 | STOR-03 | Phase 2 | Pending |
 | STOR-04 | Phase 2 | Pending |
