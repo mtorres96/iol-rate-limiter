@@ -28,7 +28,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Each of Token Bucket, Sliding Window Counter, and Fixed Window can be swapped behind the same `RateLimiter.consume(key, cost?)` call and returns a `Decision` with `allowed`, `limit`, `remaining`, `resetMs`, `retryAfterMs`.
   3. With an injected `FakeClock` (no real sleeps), tests demonstrate refill, burst, window rollover, request cost, and exact-limit boundary behavior — including Fixed Window's documented boundary-burst.
   4. A burst of concurrent in-memory `consume` calls admits exactly `limit` (over-admission guard) and the `Store` interface exposes one algorithm-shaped atomic op per algorithm (not generic get/set).
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Bootstrap /rate-limiter ESM package scaffold (configs, locked dev deps, tsc/vitest/eslint gates)
+- [ ] 01-02-PLAN.md — Core contracts (RateLimiter/Decision/Store/Clock/configs/OpTuple) + injectable Clock & FakeClock
+- [ ] 01-03-PLAN.md — MemoryStore three algorithm ops + three interchangeable thin limiters + public barrel
+- [ ] 01-04-PLAN.md — Deterministic FakeClock test suites (TB/SW/FW) + exact-limit concurrency over-admission guard
 
 ### Phase 2: Conformance Harness, Redis/Lua Store & Defensive Behavior
 **Goal**: A distributed store is correct and resilient — the same conformance suite that pins the contract passes against both the in-memory reference and an atomic-Lua Redis store, which bounds every call and applies an explicit fail-open/closed policy.
@@ -73,7 +79,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Core, Algorithms & In-Memory Reference | 0/TBD | Not started | - |
+| 1. Core, Algorithms & In-Memory Reference | 0/4 | Not started | - |
 | 2. Conformance, Redis/Lua & Defensive Behavior | 0/TBD | Not started | - |
 | 3. Express Middleware & HTTP Semantics | 0/TBD | Not started | - |
 | 4. Demo, Docker & DESIGN.md | 0/TBD | Not started | - |
