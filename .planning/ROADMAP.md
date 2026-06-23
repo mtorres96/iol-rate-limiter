@@ -37,7 +37,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 **Wave 1**
 
-- [ ] 01-01-PLAN.md — Bootstrap /rate-limiter ESM package scaffold (configs, locked dev deps, tsc/vitest/eslint gates)
+- [x] 01-01-PLAN.md — Bootstrap /rate-limiter ESM package scaffold (configs, locked dev deps, tsc/vitest/eslint gates)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -103,7 +103,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Core, Algorithms & In-Memory Reference | 0/4 | Not started | - |
+| 1. Core, Algorithms & In-Memory Reference | 1/4 | In Progress|  |
 | 2. Conformance, Redis/Lua & Defensive Behavior | 0/TBD | Not started | - |
 | 3. Express Middleware & HTTP Semantics | 0/TBD | Not started | - |
 | 4. Demo, Docker & DESIGN.md | 0/TBD | Not started | - |

@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Phase 1 context gathered
-last_updated: "2026-06-23T22:55:49.998Z"
-last_activity: 2026-06-23 -- Phase 01 planning complete
+last_updated: "2026-06-23T23:09:42.457Z"
+last_activity: 2026-06-23
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 4
-  completed_plans: 0
+  completed_plans: 1
   percent: 0
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-23)
 
 **Core value:** The core rate-limiting algorithms must be correct under concurrency and comprehensively tested, including time-based and race-condition edge cases.
-**Current focus:** Phase 1 — Core, Algorithms & In-Memory Reference
+**Current focus:** Phase 01 — core-algorithms-in-memory-reference
 
 ## Current Position
 
-Phase: 1 of 4 (Core, Algorithms & In-Memory Reference)
-Plan: 0 of TBD in current phase
+Phase: 01 (core-algorithms-in-memory-reference) — EXECUTING
+Plan: 2 of 4
 Status: Ready to execute
-Last activity: 2026-06-23 -- Phase 01 planning complete
+Last activity: 2026-06-23
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [███░░░░░░░] 25%
 
 ## Performance Metrics
 
@@ -52,6 +52,7 @@ Progress: [░░░░░░░░░░] 0%
 - Trend: -
 
 *Updated after each plan completion*
+| Phase 01 P01 | 2 | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -63,6 +64,8 @@ Recent decisions affecting current work:
 - Roadmap: Defensive behavior (timeouts + fail-open/closed) merged into the Redis phase (Phase 2) for a clean coarse structure — the timeout/policy layer lives inside RedisStore.
 - Roadmap: Conformance suite is authored before/with the Redis store (Phase 2) so it defines the contract and prevents TS↔Lua drift.
 - Roadmap: Express adapter (Phase 3) depends only on the RateLimiter interface — parallelizable after Phase 1, no Redis needed.
+- [Phase 01]: Pinned @vitest/coverage-v8 to exact 4.1.9 (not caret) — peer range is exact vitest version
+- [Phase 01]: tsconfig noEmit:true makes tsc the type-gate; tsup owns emit (avoids dual-emit mismatch)
 
 ### Pending Todos
 
@@ -82,6 +85,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-23T21:18:07.654Z
+Last session: 2026-06-23T23:09:17.797Z
 Stopped at: Phase 1 context gathered
-Resume file: .planning/phases/01-core-algorithms-in-memory-reference/01-CONTEXT.md
+Resume file: None
