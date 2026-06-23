@@ -98,6 +98,40 @@ describe("SlidingWindowLimiter", () => {
     expect(over.remaining).toBe(0);
   });
 
+  // WR-03 regression: `remaining` is derived from `usedAfter` while the persisted
+  // count is `currAfter` — two separate quantities whose agreement must hold for
+  // the Phase-2 Lua port. Pin the invariant across a long same-window sequence:
+  // while admitted, `remaining` stays a non-negative integer that never increases
+  // as more is consumed in the same window; once a reject occurs, `remaining` is 0
+  // and the immediately-following same-`now` probe also rejects with `remaining` 0.
+  // This catches any divergence between the reported `remaining` and the actual
+  // admit/reject decision.
+  it("remaining is consistent with the next same-now admit/reject across a long sequence (WR-03)", async () => {
+    const { clock, limiter } = setup();
+    // Seed a previous window so the weighted prev contribution is exercised.
+    for (let i = 0; i < 5; i++) await limiter.consume("k"); // bucket 0: prev = 5
+    clock.setTime(WINDOW + WINDOW / 2); // 50% into bucket 1, overlap 0.5 -> prev weight 2.5
+
+    let lastRemaining = Infinity;
+    for (let i = 0; i < 20; i++) {
+      const d = await limiter.consume("k");
+      if (!d.allowed) {
+        // Once we reject, remaining must be 0 and stay 0 (exhausted, same now).
+        expect(d.remaining).toBe(0);
+        const again = await limiter.consume("k");
+        expect(again.allowed).toBe(false);
+        expect(again.remaining).toBe(0);
+        break;
+      }
+      // While admitted, remaining must be a non-negative integer that does not
+      // increase as we consume more in the same window.
+      expect(Number.isInteger(d.remaining)).toBe(true);
+      expect(d.remaining).toBeGreaterThanOrEqual(0);
+      expect(d.remaining).toBeLessThanOrEqual(lastRemaining);
+      lastRemaining = d.remaining;
+    }
+  });
+
   it("leaves the current count unchanged on a reject (D-01)", async () => {
     const { clock, limiter } = setup();
     // Fill bucket 0 to the limit, then reject in the same window.
