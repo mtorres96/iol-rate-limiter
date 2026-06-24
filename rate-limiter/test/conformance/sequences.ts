@@ -117,6 +117,18 @@ export const tbCases: AlgoCase[] = [
       { now: 0, cost: 1, key: "k" }, // empty → reject
     ],
   },
+  {
+    // WR-05: multi-cost (cost>1) admit + a cost>1 partial-deficit reject so the
+    // Lua's `need = cost - refilled` / ceil retryAfterMs arithmetic is exercised
+    // with cost != 1. cap=5, refill 1/1000ms.
+    name: "token-bucket: cost>1 admit then cost>1 partial-deficit reject (WR-05)",
+    make: tb,
+    steps: [
+      { now: 0, cost: 2, key: "k" }, // 5 → admit, 3 left, remaining 3
+      { now: 0, cost: 2, key: "k" }, // 3 → admit, 1 left, remaining 1
+      { now: 0, cost: 3, key: "k" }, // need 3 but 1 left → reject; retryAfter=ceil((3-1)/1*1000)=2000
+    ],
+  },
 ];
 
 // --- Sliding Window --------------------------------------------------------
@@ -183,6 +195,39 @@ export const swCases: AlgoCase[] = [
       { now: 90_000, cost: 1, key: "k" }, // floor(5+2.5)=7; 8>7 → reject, remaining 0
     ],
   },
+  {
+    // WR-05: force the `else`/OVERSHOOT retryAfterMs branch (memory.ts L162-172 /
+    // sliding-window.lua L71-81) — the single most arithmetic-heavy line in the
+    // port, with ZERO prior conformance coverage. To enter that branch a request
+    // must REJECT on the weighted estimate (flooredEstimate + cost > limit) while
+    // curr ALONE still fits (curr + cost <= limit), so neither the admit branch
+    // nor the `curr+cost>limit` branch is taken.
+    //
+    // limit=7, windowMs=60_000. Fill bucket 0 to 7 → prev=7. Move 50% into bucket
+    // 1 (now=90_000): overlapFraction=0.5 → prev contributes 7*0.5=3.5. Admit
+    // three cost-1 requests (curr 0→3), then a cost-2 request:
+    //   flooredEstimate = floor(3 + 3.5) = 6;  6 + 2 = 8 > 7 → REJECT
+    //   curr + cost = 3 + 2 = 5 <= 7           → NOT the curr-alone branch
+    //   → else: overshoot = 6+2-7 = 1; msToDecayOne = 60000/7 = 8571.43...;
+    //     retryAfterMs = min(ceil(1*8571.43), ceil(30000)) = min(8572, 30000) = 8572.
+    // The shared oracle computes this ONCE; both stores must reproduce 8572 exactly
+    // — any floor/ceil or /prev drift in the Lua surfaces here.
+    name: "sliding-window: cost>1 reject drives the overshoot/else retryAfterMs branch (WR-05)",
+    make: sw,
+    steps: [
+      { now: 0, cost: 1, key: "k" },
+      { now: 0, cost: 1, key: "k" },
+      { now: 0, cost: 1, key: "k" },
+      { now: 0, cost: 1, key: "k" },
+      { now: 0, cost: 1, key: "k" },
+      { now: 0, cost: 1, key: "k" },
+      { now: 0, cost: 1, key: "k" }, // 7 admitted → prev becomes 7
+      { now: 90_000, cost: 1, key: "k" }, // 50% into bucket 1: floor(0+3.5)=3; admit, curr→1
+      { now: 90_000, cost: 1, key: "k" }, // floor(1+3.5)=4; admit, curr→2
+      { now: 90_000, cost: 1, key: "k" }, // floor(2+3.5)=5; admit, curr→3
+      { now: 90_000, cost: 2, key: "k" }, // floor(3+3.5)=6; 6+2=8>7 reject; curr+2=5<=7 → ELSE branch
+    ],
+  },
 ];
 
 // --- Fixed Window ----------------------------------------------------------
@@ -238,6 +283,18 @@ export const fwCases: AlgoCase[] = [
       { now: 1000, cost: 1, key: "burst" },
       { now: 1000, cost: 1, key: "burst" },
       { now: 1000, cost: 1, key: "burst" }, // 5 MORE admitted → 2x across ~1ms
+    ],
+  },
+  {
+    // WR-05: multi-cost (cost>1) so the count+cost<=limit decision and the reject
+    // retryAfterMs (ms to the boundary) are exercised with cost != 1. limit=5.
+    name: "fixed-window: cost>1 fills then a cost>1 over-limit rejects (WR-05)",
+    make: fw,
+    steps: [
+      { now: 0, cost: 2, key: "k" }, // count 0→2 → admit, remaining 3
+      { now: 0, cost: 2, key: "k" }, // count 2→4 → admit, remaining 1
+      { now: 0, cost: 2, key: "k" }, // 4+2=6>5 → reject (count unchanged), retryAfter=ceil(1000)
+      { now: 0, cost: 1, key: "k" }, // 4+1=5<=5 → admit (exact), remaining 0
     ],
   },
 ];
