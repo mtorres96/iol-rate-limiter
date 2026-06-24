@@ -82,10 +82,15 @@ export interface WindowConfig {
  * each op IS the algorithm and the single atomic unit. There is intentionally
  * NO generic key-value `get`/`set`: that would push the algorithm math into the
  * limiter and break the atomicity contract the Lua port relies on (D-06/D-08).
- * Every op returns an `OpTuple`, never a `Decision`.
+ * Every op returns a `Promise<OpTuple>`, never a `Decision`.
+ *
+ * Async contract (D2-01): the ops are uniformly `Promise<OpTuple>` so the
+ * in-memory `MemoryStore` (which resolves immediately, no network) and the
+ * future `RedisStore` (which resolves over the wire) implement ONE async
+ * contract the conformance suite drives identically.
  */
 export interface Store {
-  tokenBucket(key: string, cfg: TBConfig, cost: number, now: number): OpTuple;
-  slidingWindow(key: string, cfg: WindowConfig, cost: number, now: number): OpTuple;
-  fixedWindow(key: string, cfg: WindowConfig, cost: number, now: number): OpTuple;
+  tokenBucket(key: string, cfg: TBConfig, cost: number, now: number): Promise<OpTuple>;
+  slidingWindow(key: string, cfg: WindowConfig, cost: number, now: number): Promise<OpTuple>;
+  fixedWindow(key: string, cfg: WindowConfig, cost: number, now: number): Promise<OpTuple>;
 }

@@ -13,6 +13,12 @@
 // concurrency test (plan 01-04) proves exactly `limit` admitted under N
 // overlapping calls.
 //
+// Async contract (D2-01): each op's return type is `Promise<OpTuple>` to match
+// the uniform `Store` contract the RedisStore also implements. The synchronous
+// read-modify-write body is UNCHANGED — the only async-ness is wrapping the
+// already-computed tuple in `Promise.resolve(...)` at the return. There is still
+// NO `await` inside any critical section, so event-loop atomicity is preserved.
+//
 // Rounding contract (LOCKED — pinned in comments on every outgoing duration and
 // on `remaining` because the Phase-2 Lua must reproduce these bit-for-bit for
 // TEST-02 conformance):
@@ -53,7 +59,7 @@ export class MemoryStore implements Store {
    * Token Bucket (ALGO-01 / D-10): lazily refill `refillPerInterval` tokens per
    * `intervalMs`, clamped to `capacity`; admit when `cost <= tokens`.
    */
-  tokenBucket(key: string, cfg: TBConfig, cost: number, now: number): OpTuple {
+  tokenBucket(key: string, cfg: TBConfig, cost: number, now: number): Promise<OpTuple> {
     // (1) load state or init a FULL bucket at `now`.
     const s = (this.state.get(key) as TBState | undefined) ?? {
       tokens: cfg.capacity,
@@ -89,7 +95,8 @@ export class MemoryStore implements Store {
     // refill even on reject, but `cost` is NOT consumed on reject — D-01).
     this.state.set(key, { tokens: tokensAfter, lastRefill: now });
 
-    return [allowed, remaining, resetMs, retryAfterMs];
+    // Wrap the already-computed tuple; NO await ran inside the section above.
+    return Promise.resolve([allowed, remaining, resetMs, retryAfterMs]);
   }
 
   /**
@@ -101,7 +108,7 @@ export class MemoryStore implements Store {
    * the current window → floor(3 + 5*0.5) = floor(5.5) = 5; 5 + 1 = 6 <= 7 →
    * admit, remaining = 1.
    */
-  slidingWindow(key: string, cfg: WindowConfig, cost: number, now: number): OpTuple {
+  slidingWindow(key: string, cfg: WindowConfig, cost: number, now: number): Promise<OpTuple> {
     const bucket = Math.floor(now / cfg.windowMs);
 
     // (1) load + roll. On a 1-bucket advance, curr→prev; on a >=2-bucket gap the
@@ -166,7 +173,8 @@ export class MemoryStore implements Store {
 
     this.state.set(key, { bucket, curr: currAfter, prev });
 
-    return [allowed, remaining, resetMs, retryAfterMs];
+    // Wrap the already-computed tuple; NO await ran inside the section above.
+    return Promise.resolve([allowed, remaining, resetMs, retryAfterMs]);
   }
 
   /**
@@ -177,7 +185,7 @@ export class MemoryStore implements Store {
    * `limit` again at the start of N+1) is REQUIRED behavior to exhibit — do NOT
    * add any smoothing (ALGO-03 / Pitfall 4).
    */
-  fixedWindow(key: string, cfg: WindowConfig, cost: number, now: number): OpTuple {
+  fixedWindow(key: string, cfg: WindowConfig, cost: number, now: number): Promise<OpTuple> {
     const bucket = Math.floor(now / cfg.windowMs);
 
     // (1) load state; (reset) start a fresh count whenever the bucket index moves.
@@ -200,6 +208,7 @@ export class MemoryStore implements Store {
     // `prev` is unused by fixed window but kept for the shared WindowState shape.
     this.state.set(key, { bucket, curr: countAfter, prev: 0 });
 
-    return [allowed, remaining, resetMs, retryAfterMs];
+    // Wrap the already-computed tuple; NO await ran inside the section above.
+    return Promise.resolve([allowed, remaining, resetMs, retryAfterMs]);
   }
 }
