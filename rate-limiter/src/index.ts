@@ -5,10 +5,13 @@
 
 // Contracts (the seam Phase 2's RedisStore + Phase 3's Express adapter depend on).
 export type {
+  BreakerConfig,
   Clock,
   Decision,
   OpTuple,
   RateLimiter,
+  RateLimitPolicy,
+  RedisStoreConfig,
   Store,
   TBConfig,
   WindowConfig,

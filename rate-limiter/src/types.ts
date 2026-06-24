@@ -82,10 +82,75 @@ export interface WindowConfig {
  * each op IS the algorithm and the single atomic unit. There is intentionally
  * NO generic key-value `get`/`set`: that would push the algorithm math into the
  * limiter and break the atomicity contract the Lua port relies on (D-06/D-08).
- * Every op returns an `OpTuple`, never a `Decision`.
+ * Every op returns a `Promise<OpTuple>`, never a `Decision`.
+ *
+ * Async contract (D2-01): the ops are uniformly `Promise<OpTuple>` so the
+ * in-memory `MemoryStore` (which resolves immediately, no network) and the
+ * future `RedisStore` (which resolves over the wire) implement ONE async
+ * contract the conformance suite drives identically.
  */
 export interface Store {
-  tokenBucket(key: string, cfg: TBConfig, cost: number, now: number): OpTuple;
-  slidingWindow(key: string, cfg: WindowConfig, cost: number, now: number): OpTuple;
-  fixedWindow(key: string, cfg: WindowConfig, cost: number, now: number): OpTuple;
+  tokenBucket(key: string, cfg: TBConfig, cost: number, now: number): Promise<OpTuple>;
+  slidingWindow(key: string, cfg: WindowConfig, cost: number, now: number): Promise<OpTuple>;
+  fixedWindow(key: string, cfg: WindowConfig, cost: number, now: number): Promise<OpTuple>;
+}
+
+// ---------------------------------------------------------------------------
+// RedisStore configuration surface (Phase 2 / D2-04..D2-07).
+//
+// These are TYPE-ONLY shapes the future `RedisStore` (plan 03) is built against.
+// They live here, in the framework-agnostic core, and import NOTHING from
+// ioredis — the Redis adapter consumes these contracts but the core stays
+// transport-agnostic. Construction-time validation lives in `validate.ts`
+// (`assertPolicy` / `assertPrefix` + the existing `assertPositiveConfig`).
+// ---------------------------------------------------------------------------
+
+/**
+ * How the RedisStore behaves when Redis is unreachable / the op errors or times
+ * out (D2-04).
+ *
+ * - `"fail-open"`  (DEFAULT): admit the request — availability over strictness.
+ * - `"fail-closed"`: reject the request — strictness over availability.
+ */
+export type RateLimitPolicy = "fail-open" | "fail-closed";
+
+/**
+ * Circuit-breaker tuning for the RedisStore (D2-05).
+ *
+ * After `failureThreshold` consecutive failures the breaker opens and the
+ * configured `RateLimitPolicy` is applied directly (no Redis round-trip) until
+ * `cooldownMs` elapses, then a trial request probes recovery.
+ *
+ * Recommended defaults (D2-05): `failureThreshold` 5, `cooldownMs` 2000.
+ */
+export interface BreakerConfig {
+  /** Consecutive failures before the breaker opens. Default: 5. */
+  failureThreshold: number;
+  /** Milliseconds the breaker stays open before a trial probe. Default: 2000. */
+  cooldownMs: number;
+}
+
+/**
+ * Full RedisStore construction config (D2-04..D2-07). Validated at construction
+ * by the validators in `validate.ts` before any op runs.
+ */
+export interface RedisStoreConfig {
+  /**
+   * Key namespace prefix applied to every Redis key (D2-07). Non-empty string.
+   * Default: `"rl"`.
+   */
+  keyPrefix: string;
+  /**
+   * Per-command timeout in ms (D2-06). Recommended band: 50–100ms. Must be a
+   * positive finite number. Default: lives in the 50–100 band (e.g. 50).
+   */
+  commandTimeoutMs: number;
+  /**
+   * Behavior on Redis failure/timeout (D2-04). Default: `"fail-open"`.
+   */
+  policy: RateLimitPolicy;
+  /**
+   * Circuit-breaker thresholds (D2-05). Defaults: see {@link BreakerConfig}.
+   */
+  breaker: BreakerConfig;
 }

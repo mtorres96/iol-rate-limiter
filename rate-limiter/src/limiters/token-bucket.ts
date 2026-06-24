@@ -27,7 +27,7 @@ export class TokenBucketLimiter implements RateLimiter {
     // Reject non-positive-integer / non-finite `cost` BEFORE any store op runs
     // (CR-01/CR-02/WR-02): an unvalidated cost corrupts bucket state or leaks NaN.
     assertCost(cost);
-    const [allowed, remaining, resetMs, retryAfterMs] = this.store.tokenBucket(
+    const [allowed, remaining, resetMs, retryAfterMs] = await this.store.tokenBucket(
       key,
       this.cfg,
       cost,

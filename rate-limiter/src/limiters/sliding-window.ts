@@ -23,7 +23,7 @@ export class SlidingWindowLimiter implements RateLimiter {
     // Reject non-positive-integer / non-finite `cost` BEFORE any store op runs
     // (CR-01/CR-02/WR-02): an unvalidated cost frees window allowance or leaks NaN.
     assertCost(cost);
-    const [allowed, remaining, resetMs, retryAfterMs] = this.store.slidingWindow(
+    const [allowed, remaining, resetMs, retryAfterMs] = await this.store.slidingWindow(
       key,
       this.cfg,
       cost,
