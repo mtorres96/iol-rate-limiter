@@ -163,15 +163,19 @@ export class RedisStore implements Store {
    * Apply the fail-open/closed policy when Redis is unavailable (D2-04 / DEF-02).
    * - fail-open  (default): admit. remaining/reset are best-effort (we cannot
    *   know real state); retryAfterMs is 0 since we admitted.
-   * - fail-closed: deny. retryAfterMs ≈ the breaker cooldown — a sensible backoff
-   *   until Redis is probed again.
+   * - fail-closed: deny. `resetMs` is UNKNOWN while Redis is down — it means "ms
+   *   until full replenishment" (types.ts), which has NOTHING to do with the
+   *   breaker cooldown (WR-03). Reusing `cooldownMs` for it was a category error,
+   *   so it is reported as `0` (unknown, consistent with the fail-open branch).
+   *   `retryAfterMs` stays the breaker cooldown — a sensible backoff hint until
+   *   Redis is probed again.
    */
   private degraded(): OpTuple {
     if (this.cfg.policy === "fail-open") {
       // [allowed=1, remaining (unknown → 0), resetMs (unknown → 0), retryAfterMs=0]
       return [1, 0, 0, 0];
     }
-    // fail-closed: deny with a cooldown-sized backoff.
-    return [0, 0, this.cfg.breaker.cooldownMs, this.cfg.breaker.cooldownMs];
+    // fail-closed: deny with a cooldown-sized retry hint; resetMs unknown (0).
+    return [0, 0, 0, this.cfg.breaker.cooldownMs];
   }
 }
