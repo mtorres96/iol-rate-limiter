@@ -73,7 +73,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 02-03-PLAN.md — RedisStore (defineCommand + commandTimeout + circuit breaker + fail-open/closed policy) + breaker unit tests + barrel exports
+- [x] 02-03-PLAN.md — RedisStore (defineCommand + commandTimeout + circuit breaker + fail-open/closed policy) + breaker unit tests + barrel exports
 
 **Wave 3** *(blocked on Wave 2)*
 
@@ -121,6 +121,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Core, Algorithms & In-Memory Reference | 4/4 | Complete   | 2026-06-23 |
-| 2. Conformance, Redis/Lua & Defensive Behavior | 2/5 | In Progress|  |
+| 2. Conformance, Redis/Lua & Defensive Behavior | 3/5 | In Progress|  |
 | 3. Express Middleware & HTTP Semantics | 0/TBD | Not started | - |
 | 4. Demo, Docker & DESIGN.md | 0/TBD | Not started | - |
