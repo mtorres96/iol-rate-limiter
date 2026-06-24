@@ -21,8 +21,10 @@
   },
   "devDependencies": {
     "@testcontainers/redis": "^12.0.3",
+    "@types/dockerode": "^4.0.1",
     "@types/node": "^24.13.2",
     "@vitest/coverage-v8": "4.1.9",
+    "dockerode": "^5.0.0",
     "eslint": "^10.5.0",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.8.4",
