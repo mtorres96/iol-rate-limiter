@@ -20,14 +20,19 @@
     "format": "prettier --write ."
   },
   "devDependencies": {
+    "@testcontainers/redis": "^12.0.3",
     "@types/node": "^24.13.2",
     "@vitest/coverage-v8": "4.1.9",
     "eslint": "^10.5.0",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.8.4",
+    "testcontainers": "^12.0.3",
     "tsup": "^8.5.1",
     "typescript": "~5.9",
     "typescript-eslint": "^8.62.0",
     "vitest": "^4.1.9"
+  },
+  "dependencies": {
+    "ioredis": "^5.11.1"
   }
 }
