@@ -50,18 +50,57 @@ describe("CircuitBreaker", () => {
     expect(breaker.canAttempt()).toBe(false);
   });
 
-  it("open → half-open: allows exactly ONE probe once the cooldown elapses", () => {
+  it("open → half-open: admits EXACTLY ONE probe; further attempts short-circuit until it resolves (CR-01)", () => {
     const clock = new FakeClock(0);
     const breaker = new CircuitBreaker(clock, THRESHOLD, COOLDOWN);
     for (let i = 0; i < THRESHOLD; i++) breaker.recordFailure(); // opened at t=0
 
     clock.setTime(COOLDOWN); // cooldown elapsed (>= boundary)
-    // First call transitions open → half-open and permits the probe.
+    // First call transitions open → half-open and CLAIMS the single probe slot.
     expect(breaker.canAttempt()).toBe(true);
-    // Without resolving the probe, the breaker is half-open (not open), so it
-    // keeps returning true — the single-probe semantics are enforced by the
-    // caller resolving via recordSuccess/recordFailure, covered below.
+    // The probe is in flight (not yet resolved): every subsequent attempt is
+    // short-circuited so we never flood a recovering Redis with concurrent probes.
+    expect(breaker.canAttempt()).toBe(false);
+    expect(breaker.canAttempt()).toBe(false);
+  });
+
+  it("half-open burst: of N synchronous (Promise.all-shaped) attempts, EXACTLY ONE is admitted (CR-01)", () => {
+    const clock = new FakeClock(0);
+    const breaker = new CircuitBreaker(clock, THRESHOLD, COOLDOWN);
+    for (let i = 0; i < THRESHOLD; i++) breaker.recordFailure(); // opened at t=0
+
+    clock.setTime(COOLDOWN); // cooldown elapsed → next attempt half-opens
+    // Mirror RedisStore.run() under Promise.all: every pending caller calls
+    // canAttempt() synchronously (no await between the gate and the round-trip),
+    // then the awaited op resolves later. The breaker must admit exactly one as
+    // the probe and short-circuit the rest.
+    const N = 20;
+    const admitted = Array.from({ length: N }, () => breaker.canAttempt()).filter(Boolean).length;
+    expect(admitted).toBe(1); // exactly ONE probe reaches Redis; the other N-1 short-circuit
+
+    // The single probe then resolves the breaker for everyone.
+    breaker.recordSuccess();
+    expect(breaker.canAttempt()).toBe(true); // CLOSED again
+  });
+
+  it("half-open probe failure releases the slot so the NEXT post-cooldown caller can re-probe (CR-01)", () => {
+    const clock = new FakeClock(0);
+    const breaker = new CircuitBreaker(clock, THRESHOLD, COOLDOWN);
+    for (let i = 0; i < THRESHOLD; i++) breaker.recordFailure(); // opened at t=0
+
+    clock.setTime(COOLDOWN);
+    expect(breaker.canAttempt()).toBe(true); // probe slot claimed
+    expect(breaker.canAttempt()).toBe(false); // concurrent callers short-circuit
+    breaker.recordFailure(); // probe failed → re-open, slot released, cooldown restarts
+
+    // Still open before the restarted cooldown — no leaked half-open admit.
+    clock.setTime(COOLDOWN + COOLDOWN - 1);
+    expect(breaker.canAttempt()).toBe(false);
+    // After the restarted cooldown, a single fresh probe is admitted again ...
+    clock.setTime(COOLDOWN + COOLDOWN);
     expect(breaker.canAttempt()).toBe(true);
+    // ... and exclusivity holds on the new probe too.
+    expect(breaker.canAttempt()).toBe(false);
   });
 
   it("half-open → closed: a probe success closes the breaker and resets failures", () => {
