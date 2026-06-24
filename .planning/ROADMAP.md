@@ -63,8 +63,25 @@ Plans:
   3. Against a real Redis (`@testcontainers/redis`), a concurrent burst admits exactly `limit` (no read-modify-write over-admission).
   4. Every Redis call is bounded by a configurable timeout, and fault-injection tests prove both fail-open and fail-closed policies behave correctly under a down/slow Redis with no unhandled rejection (documented default).
 
-**Plans**: TBD
-**Research**: FLAGGED — lock the per-algorithm Lua KEYS/ARGV layout, TTL sizing, return-tuple shape, and conformance-harness shape via `--research-phase` before writing scripts (MEDIUM-confidence specifics per research SUMMARY).
+**Plans**: 5 plans (research completed — Lua KEYS/ARGV/TTL, conformance shape, breaker/timeout/policy defaults all locked in 02-RESEARCH.md)
+
+Plans:
+**Wave 1**
+
+- [ ] 02-01-PLAN.md — Async Store migration (Promise<OpTuple>) + RedisStore config types + policy/prefix validators
+- [ ] 02-02-PLAN.md — Install ioredis/testcontainers + three atomic-Lua ports + tsup lua-copy + shared conformance fixtures
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 02-03-PLAN.md — RedisStore (defineCommand + commandTimeout + circuit breaker + fail-open/closed policy) + breaker unit tests + barrel exports
+
+**Wave 3** *(blocked on Wave 2)*
+
+- [ ] 02-04-PLAN.md — Parametrized conformance suite (both stores, identical Decisions) + real-Redis integration + concurrency over-admission guard
+
+**Wave 4** *(blocked on Wave 3)*
+
+- [ ] 02-05-PLAN.md — Fault-injection matrix: down/slow × fail-open/fail-closed × breaker (no unhandled rejection)
 
 ### Phase 3: Express Middleware & HTTP Semantics
 
@@ -104,6 +121,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Core, Algorithms & In-Memory Reference | 4/4 | Complete   | 2026-06-23 |
-| 2. Conformance, Redis/Lua & Defensive Behavior | 0/TBD | Not started | - |
+| 2. Conformance, Redis/Lua & Defensive Behavior | 0/5 | Not started | - |
 | 3. Express Middleware & HTTP Semantics | 0/TBD | Not started | - |
 | 4. Demo, Docker & DESIGN.md | 0/TBD | Not started | - |
