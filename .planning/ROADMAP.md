@@ -77,7 +77,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2)*
 
-- [ ] 02-04-PLAN.md — Parametrized conformance suite (both stores, identical Decisions) + real-Redis integration + concurrency over-admission guard
+- [x] 02-04-PLAN.md — Parametrized conformance suite (both stores, identical Decisions) + real-Redis integration + concurrency over-admission guard
 
 **Wave 4** *(blocked on Wave 3)*
 
@@ -121,6 +121,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Core, Algorithms & In-Memory Reference | 4/4 | Complete   | 2026-06-23 |
-| 2. Conformance, Redis/Lua & Defensive Behavior | 3/5 | In Progress|  |
+| 2. Conformance, Redis/Lua & Defensive Behavior | 4/5 | In Progress|  |
 | 3. Express Middleware & HTTP Semantics | 0/TBD | Not started | - |
 | 4. Demo, Docker & DESIGN.md | 0/TBD | Not started | - |
