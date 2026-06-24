@@ -109,3 +109,7 @@ Each task was committed atomically:
 
 ## No Known Stubs
 No placeholder/empty-data stubs introduced; the config types are type-only contracts consumed by plan 03.
+
+## Self-Check: PASSED
+- `02-01-SUMMARY.md` exists.
+- Commits `8e83566` (Task 1), `37f6ec1` (Task 2), `0c793e9` (docs) all present in git log.
