@@ -68,8 +68,8 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 02-01-PLAN.md — Async Store migration (Promise<OpTuple>) + RedisStore config types + policy/prefix validators
-- [ ] 02-02-PLAN.md — Install ioredis/testcontainers + three atomic-Lua ports + tsup lua-copy + shared conformance fixtures
+- [x] 02-01-PLAN.md — Async Store migration (Promise<OpTuple>) + RedisStore config types + policy/prefix validators
+- [x] 02-02-PLAN.md — Install ioredis/testcontainers + three atomic-Lua ports + tsup lua-copy + shared conformance fixtures
 
 **Wave 2** *(blocked on Wave 1)*
 
@@ -121,6 +121,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Core, Algorithms & In-Memory Reference | 4/4 | Complete   | 2026-06-23 |
-| 2. Conformance, Redis/Lua & Defensive Behavior | 0/5 | Not started | - |
+| 2. Conformance, Redis/Lua & Defensive Behavior | 2/5 | In Progress|  |
 | 3. Express Middleware & HTTP Semantics | 0/TBD | Not started | - |
 | 4. Demo, Docker & DESIGN.md | 0/TBD | Not started | - |
