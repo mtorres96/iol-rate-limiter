@@ -44,6 +44,14 @@ type ScriptClient = Redis & {
   rl_fw(key: string, ...argv: number[]): Promise<[number, number, number, number]>;
 };
 
+/**
+ * Upper bound on how long {@link RedisStore.close} waits for `quit()` to reply
+ * before force-disconnecting (WR-04). Generous vs the per-command timeout band —
+ * close() is teardown, not the hot path — but finite so a hung quit can't stall
+ * shutdown forever.
+ */
+const CLOSE_QUIT_TIMEOUT_MS = 1000;
+
 /** Defaults (D2-04..D2-07) applied to any field the caller omits. */
 const DEFAULT_CONFIG: RedisStoreConfig = {
   keyPrefix: "rl", // D2-07
@@ -138,9 +146,32 @@ export class RedisStore implements Store {
     return this.run(() => this.client.rl_fw(redisKey, now, cfg.limit, cfg.windowMs, cost));
   }
 
-  /** Close the shared client (test teardown / graceful shutdown). */
+  /**
+   * Close the shared client (test teardown / graceful shutdown).
+   *
+   * `quit()` sends QUIT and waits for the reply. Under the SLOW fault the suite
+   * induces (a frozen container with `enableOfflineQueue:false`), that reply may
+   * NEVER arrive — `quit()` then neither resolves nor rejects and a bare
+   * `await this.client.quit()` would hang teardown forever (WR-04). So we race
+   * the quit against a short timeout and force a synchronous `disconnect()` if it
+   * (or the timeout) loses — `disconnect()` tears the socket down locally without
+   * waiting on the server.
+   */
   async close(): Promise<void> {
-    await this.client.quit().catch(() => this.client.disconnect());
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      await Promise.race([
+        this.client.quit(),
+        new Promise<never>((_, reject) => {
+          timer = setTimeout(() => reject(new Error("quit timeout")), CLOSE_QUIT_TIMEOUT_MS);
+        }),
+      ]);
+    } catch {
+      // quit() rejected OR the timeout fired (hung quit): force the socket down.
+      this.client.disconnect();
+    } finally {
+      if (timer) clearTimeout(timer); // don't leak the timer / keep the loop alive
+    }
   }
 
   /**
