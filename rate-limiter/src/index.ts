@@ -23,6 +23,10 @@ export { FakeClock, SystemClock } from "./clock.js";
 // In-memory reference store (the three algorithm ops).
 export { MemoryStore } from "./store/memory.js";
 
+// Distributed Redis store (atomic Lua) + its circuit breaker (Phase 2).
+export { RedisStore } from "./store/redis.js";
+export { CircuitBreaker } from "./store/breaker.js";
+
 // The three interchangeable limiters.
 export { TokenBucketLimiter } from "./limiters/token-bucket.js";
 export { SlidingWindowLimiter } from "./limiters/sliding-window.js";
