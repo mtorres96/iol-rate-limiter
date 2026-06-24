@@ -1,9 +1,19 @@
 ---
 phase: 02-conformance-harness-redis-lua-store-defensive-behavior
-verified: 2026-06-24T16:10:00Z
-status: human_needed
-score: 7/10 requirements verified (3 PARTIAL — Docker-gated; all non-Docker requirements now VERIFIED)
+verified: 2026-06-24T20:30:00Z
+status: passed
+score: 10/10 requirements VERIFIED (Docker-gated TEST-02/03/04/05 now confirmed against a real redis:7.4-alpine)
 overrides_applied: 0
+docker_verification:
+  ran_against: "redis:7.4-alpine (testcontainers, Docker 28.0.4)"
+  result: "full suite 105/105 passed, 0 skipped (stable across 2 runs); typecheck + eslint + build clean"
+  fixes_required:
+    - "startRedis() now awaits the client 'ready' event — enableOfflineQueue:false threw 'Stream isnt writeable' when the first command raced the async connect (all 25 Redis tests failed cold)"
+    - "waitReady() ping-retry gate after every container stop/restart/pause/unpause; swallow ioredis reconnect error noise"
+    - "fault-injection HEALTHY baseline resetMs 0 -> 1000 (oracle-correct token-bucket time-to-refill, pinned by the conformance suite)"
+    - "DOWN cells use dedicated disposable containers — stop() removes the container and restart() remaps the host port, which permanently broke the shared client for later cells"
+    - "vitest fileParallelism:false — the four testcontainers suites must not start Redis concurrently (contention flakily timed out container startup)"
+  commit: fda1b4b
 re_verification:
   previous_status: gaps_found
   previous_score: 6/10 (1 fully VERIFIED + 5 PARTIAL; 1 BLOCKER on CR-01)
