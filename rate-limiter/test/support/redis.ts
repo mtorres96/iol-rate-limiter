@@ -73,6 +73,29 @@ export async function startRedis(): Promise<RedisHarness> {
     maxRetriesPerRequest: 1,
     enableOfflineQueue: false,
   });
+  // The fault-injection suite deliberately kills/freezes Redis, so the client
+  // will emit ECONNREFUSED 'error' events while it retries. The suites assert on
+  // the STORE's degraded() behavior, not on raw client errors — swallow them so
+  // ioredis doesn't log "Unhandled error event" (and so an unhandled 'error'
+  // can't crash the run).
+  client.on("error", () => {});
+  // `enableOfflineQueue: false` means any command issued before the socket is
+  // ready throws "Stream isn't writeable" instead of queueing. The client
+  // connects eagerly but asynchronously, so we MUST await the `ready` event
+  // before handing it out — otherwise the first `flushall()`/op in a `beforeAll`
+  // races the connection and the whole Redis suite fails on a cold start.
+  await new Promise<void>((resolve, reject) => {
+    const onReady = (): void => {
+      client.off("error", onError);
+      resolve();
+    };
+    const onError = (err: Error): void => {
+      client.off("ready", onReady);
+      reject(err);
+    };
+    client.once("ready", onReady);
+    client.once("error", onError);
+  });
   return { container, client };
 }
 
@@ -87,6 +110,32 @@ export function makeRedisStore(
   config: Partial<RedisStoreConfig> = {},
 ): RedisStore {
   return new RedisStore(harness.client, config, clock);
+}
+
+/**
+ * Block until `client` can actually serve a command again, by PINGing in a retry
+ * loop until one succeeds (or `timeoutMs` elapses).
+ *
+ * The fault-injection suite stops / restarts / pauses / unpauses the container
+ * mid-test. ioredis reconnects ASYNCHRONOUSLY in the background, and because the
+ * clients run with `enableOfflineQueue: false`, any command issued during that
+ * reconnect window throws "Stream isn't writeable" — which the store turns into a
+ * `degraded()` sentinel. Without this gate the NEXT cell's healthy sanity call
+ * races the reconnect and flakily sees degraded state instead of real Redis.
+ * Uses real wall-clock time (NOT any injected FakeClock) — this is about the
+ * socket, not the breaker.
+ */
+export async function waitReady(client: Redis, timeoutMs = 10_000): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  for (;;) {
+    try {
+      await client.ping();
+      return;
+    } catch (err) {
+      if (Date.now() > deadline) throw err;
+      await new Promise((r) => setTimeout(r, 50));
+    }
+  }
 }
 
 /** Quit the client and stop the container (call in `afterAll`). */
