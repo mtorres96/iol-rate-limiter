@@ -8,6 +8,7 @@ export type {
   BreakerConfig,
   Clock,
   Decision,
+  DegradedLogger,
   OpTuple,
   RateLimiter,
   RateLimitPolicy,

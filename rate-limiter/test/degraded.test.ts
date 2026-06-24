@@ -51,15 +51,41 @@ describe("RedisStore.degraded() tuple shape (WR-02 / WR-03)", () => {
     expect(tuple[3]).toBe(COOLDOWN_MS); // retryAfterMs is the backoff hint
   });
 
-  it("fail-open: admits without a self-contradictory throttle reading", async () => {
+  it("fail-open: admits with remaining=1 (not the self-contradictory remaining=0 — WR-02)", async () => {
     const store = new RedisStore(
       rejectingClient(),
       { keyPrefix: "deg-open", policy: "fail-open" },
       new FakeClock(0),
     );
     const tuple = (await store.tokenBucket("k", TB, 1, 0)) as OpTuple;
-    expect(tuple[0]).toBe(1); // admitted (availability over strictness — D2-04)
-    expect(tuple[3]).toBe(0); // not throttled → retryAfterMs is 0
+    // [allowed=1, remaining=1 (the admitted request "fits" — no longer 0), resetMs=0, retryAfterMs=0]
+    expect(tuple).toEqual([1, 1, 0, 0]);
+  });
+
+  it("logs ONCE on the healthy→degraded edge when a logger is wired (WR-02)", async () => {
+    const warnings: { obj: Record<string, unknown>; msg: string }[] = [];
+    const logger = { warn: (obj: Record<string, unknown>, msg: string) => warnings.push({ obj, msg }) };
+    const store = new RedisStore(
+      rejectingClient(),
+      { keyPrefix: "deg-log", policy: "fail-open", logger },
+      new FakeClock(0),
+    );
+    // Several faulted ops in a row, but the warn fires only ONCE (edge-triggered).
+    await store.tokenBucket("k", TB, 1, 0);
+    await store.tokenBucket("k", TB, 1, 0);
+    await store.tokenBucket("k", TB, 1, 0);
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]?.obj).toMatchObject({ event: "rate_limiter_degraded", policy: "fail-open" });
+  });
+
+  it("is silent with no logger wired (logger is optional — WR-02)", async () => {
+    // No `logger` in config → no throw, no output; just resolves through the policy.
+    const store = new RedisStore(
+      rejectingClient(),
+      { keyPrefix: "deg-nolog", policy: "fail-open" },
+      new FakeClock(0),
+    );
+    await expect(store.tokenBucket("k", TB, 1, 0)).resolves.toEqual([1, 1, 0, 0]);
   });
 
   it("never rejects on a Redis fault (DEF-02) — resolves through the policy", async () => {

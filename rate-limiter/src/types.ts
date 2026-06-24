@@ -115,6 +115,21 @@ export interface Store {
 export type RateLimitPolicy = "fail-open" | "fail-closed";
 
 /**
+ * Minimal structured-log sink for RedisStore degraded-mode visibility (WR-02).
+ *
+ * The store stays framework-agnostic, so it does NOT depend on `pino`. Instead it
+ * accepts this tiny `warn(obj, msg)` shape — which a real `pino` logger satisfies
+ * directly (the demo server can pass its pino instance with zero adapter), and a
+ * test can satisfy with a stub. When Redis becomes unavailable and the policy
+ * silently bypasses (fail-open) or hard-denies (fail-closed), an operator
+ * otherwise has NO signal that protection dropped; this hook restores it.
+ */
+export interface DegradedLogger {
+  /** pino-compatible: a structured object first, then a message string. */
+  warn(obj: Record<string, unknown>, msg: string): void;
+}
+
+/**
  * Circuit-breaker tuning for the RedisStore (D2-05).
  *
  * After `failureThreshold` consecutive failures the breaker opens and the
@@ -153,4 +168,12 @@ export interface RedisStoreConfig {
    * Circuit-breaker thresholds (D2-05). Defaults: see {@link BreakerConfig}.
    */
   breaker: BreakerConfig;
+  /**
+   * OPTIONAL structured-log sink (WR-02). When set, the store emits a rate-limited
+   * `warn` each time it ENTERS degraded mode (the breaker transitions to bypassing
+   * Redis) so an operator can see that protection has been bypassed. Omitted by
+   * default — the store is silent unless a logger is wired (the demo server passes
+   * its pino instance; CLAUDE.md lists pino for exactly this "fail-open events").
+   */
+  logger?: DegradedLogger;
 }

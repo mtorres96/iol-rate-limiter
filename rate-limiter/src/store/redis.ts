@@ -56,6 +56,11 @@ export class RedisStore implements Store {
   private readonly client: ScriptClient;
   private readonly breaker: CircuitBreaker;
   private readonly cfg: RedisStoreConfig;
+  // Rate-limit the degraded-mode log to the healthy→degraded EDGE (WR-02): we
+  // warn ONCE when we first enter degraded mode and suppress until a real op
+  // succeeds again, so a sustained outage emits one line per transition rather
+  // than one per request (which would itself become a log flood).
+  private degradedLogged = false;
 
   /**
    * @param client a pre-constructed ioredis client (the caller owns its
@@ -151,6 +156,7 @@ export class RedisStore implements Store {
     try {
       const [allowed, remaining, resetMs, retryAfterMs] = await op();
       this.breaker.recordSuccess();
+      this.degradedLogged = false; // healthy again → re-arm the edge-triggered warn
       return [allowed === 1 ? 1 : 0, remaining, resetMs, retryAfterMs];
     } catch {
       // Timeout, connection error, NOSCRIPT-with-no-fallback, etc. — never leak.
@@ -161,21 +167,41 @@ export class RedisStore implements Store {
 
   /**
    * Apply the fail-open/closed policy when Redis is unavailable (D2-04 / DEF-02).
-   * - fail-open  (default): admit. remaining/reset are best-effort (we cannot
-   *   know real state); retryAfterMs is 0 since we admitted.
+   * - fail-open  (default): admit. We CANNOT know the true remaining allowance
+   *   while Redis is down, so we report `remaining: 1` — the request we just
+   *   admitted "fits" — rather than the self-contradictory `allowed:1,
+   *   remaining:0` that produced a nonsensical `X-RateLimit-Remaining: 0` on an
+   *   admitted request (WR-02). reset/retry are 0 (unknown / not throttled).
    * - fail-closed: deny. `resetMs` is UNKNOWN while Redis is down — it means "ms
    *   until full replenishment" (types.ts), which has NOTHING to do with the
    *   breaker cooldown (WR-03). Reusing `cooldownMs` for it was a category error,
-   *   so it is reported as `0` (unknown, consistent with the fail-open branch).
-   *   `retryAfterMs` stays the breaker cooldown — a sensible backoff hint until
-   *   Redis is probed again.
+   *   so it is reported as `0` (unknown). `retryAfterMs` stays the breaker
+   *   cooldown — a sensible backoff hint until Redis is probed again.
+   *
+   * Visibility (WR-02): a Redis outage silently flips the limiter's behavior, so
+   * we emit ONE structured `warn` on the healthy→degraded edge (if a logger is
+   * wired) — an operator otherwise has zero signal that protection was bypassed
+   * (fail-open) or that all traffic is being hard-denied (fail-closed).
    */
   private degraded(): OpTuple {
+    this.logDegraded();
     if (this.cfg.policy === "fail-open") {
-      // [allowed=1, remaining (unknown → 0), resetMs (unknown → 0), retryAfterMs=0]
-      return [1, 0, 0, 0];
+      // [allowed=1, remaining=1 (we admitted "1 fits" — see WR-02), resetMs=0, retryAfterMs=0]
+      return [1, 1, 0, 0];
     }
     // fail-closed: deny with a cooldown-sized retry hint; resetMs unknown (0).
     return [0, 0, 0, this.cfg.breaker.cooldownMs];
+  }
+
+  /** Emit one structured warning on entering degraded mode (WR-02). Edge-triggered. */
+  private logDegraded(): void {
+    if (this.degradedLogged || !this.cfg.logger) return;
+    this.degradedLogged = true;
+    this.cfg.logger.warn(
+      { event: "rate_limiter_degraded", policy: this.cfg.policy, keyPrefix: this.cfg.keyPrefix },
+      this.cfg.policy === "fail-open"
+        ? "RedisStore degraded: Redis unavailable — fail-open is admitting all requests (rate limiting BYPASSED)"
+        : "RedisStore degraded: Redis unavailable — fail-closed is denying all requests",
+    );
   }
 }
