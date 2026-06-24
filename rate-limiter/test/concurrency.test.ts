@@ -82,7 +82,7 @@ describe("over-admission guard (event-loop atomicity)", () => {
     const cfg = { capacity: 1, refillPerInterval: 1, intervalMs: 1000 };
 
     // First op writes its result (tokens -> 0): admitted.
-    const first = store.tokenBucket("k", cfg, 1, 0);
+    const first = await store.tokenBucket("k", cfg, 1, 0);
     expect(first[0]).toBe(1); // allowed
 
     // Second op AFTER the first wrote: sees the drained state -> rejected. Because
@@ -90,7 +90,7 @@ describe("over-admission guard (event-loop atomicity)", () => {
     // this is the only ordering the event loop can produce — hence exactly 1
     // admitted, never 2. A "torn" implementation that read both before either
     // wrote would have admitted 2 (the over-admission bug this guard rules out).
-    const second = store.tokenBucket("k", cfg, 1, 0);
+    const second = await store.tokenBucket("k", cfg, 1, 0);
     expect(second[0]).toBe(0); // rejected
   });
 });

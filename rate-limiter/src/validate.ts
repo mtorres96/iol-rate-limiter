@@ -35,3 +35,30 @@ export function assertCost(cost: number): void {
     throw new RangeError(`consume: \`cost\` must be a positive integer, got ${cost}`);
   }
 }
+
+/**
+ * Throw a clear `RangeError` for any `policy` that is not one of the two valid
+ * `RateLimitPolicy` literals. Used at RedisStore construction (T-02-01 / D2-04)
+ * to reject a garbage policy enum before any op can run with it. `label` is the
+ * store/config name for a precise error message.
+ */
+export function assertPolicy(label: string, value: string): void {
+  if (value !== "fail-open" && value !== "fail-closed") {
+    throw new RangeError(
+      `${label}: \`policy\` must be "fail-open" or "fail-closed", got ${JSON.stringify(value)}`,
+    );
+  }
+}
+
+/**
+ * Throw a clear `RangeError` for any key prefix that is not a non-empty string.
+ * Used at RedisStore construction (T-02-01 / D2-07): an empty/garbage prefix
+ * would collapse the key namespace, so reject it before any op runs.
+ */
+export function assertPrefix(label: string, value: string): void {
+  if (typeof value !== "string" || value.length === 0) {
+    throw new RangeError(
+      `${label}: \`keyPrefix\` must be a non-empty string, got ${JSON.stringify(value)}`,
+    );
+  }
+}
