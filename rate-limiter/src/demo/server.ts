@@ -45,9 +45,34 @@ const DEFAULT_PORT = 3000;
  * and the two window algorithms take DIFFERENT config shapes (the config-field
  * trap — see types.ts): TB = { capacity, refillPerInterval, intervalMs }; the
  * windows = { limit, windowMs }.
+ *
+ * These are now the FALLBACK defaults for the env-driven knobs below
+ * (RL_LIMIT / RL_WINDOW_MS / RL_REFILL): unset/empty env → these values, so the
+ * demo's out-of-the-box behavior is unchanged.
  */
-const TINY_LIMIT = 5;
-const WINDOW_MS = 60_000;
+const DEFAULT_LIMIT = 5;
+const DEFAULT_WINDOW_MS = 60_000;
+
+/**
+ * Parse an integer-ish env var, fail loud on a present-but-bad value. Local to the
+ * composition root (NOT an exported core type — server.ts stays composition-only):
+ *   - undefined or empty string → `fallback` (preserves default behavior).
+ *   - otherwise Number(raw); if not finite → throw naming the var + bad value
+ *     (matching the RL_ALGO fail-loud convention).
+ * No range/positivity/integer check here — the core limiters already throw
+ * RangeError on non-positive/NaN/non-finite config (validate.ts); lean on that.
+ */
+function envInt(name: string, fallback: number): number {
+  const raw = process.env[name];
+  if (raw === undefined || raw === "") {
+    return fallback;
+  }
+  const n = Number(raw);
+  if (!Number.isFinite(n)) {
+    throw new Error(`${name} must be a finite number, got "${raw}"`);
+  }
+  return n;
+}
 
 /**
  * Select the store by REDIS_URL (D4-01). Returns the store plus a `close()` so
@@ -71,17 +96,20 @@ export function buildStore(): { store: Store; close: () => Promise<void> } {
  */
 export function buildLimiter(store: Store): RateLimiter {
   const algo = process.env.RL_ALGO ?? "token-bucket";
+  const limit = envInt("RL_LIMIT", DEFAULT_LIMIT);
+  const windowMs = envInt("RL_WINDOW_MS", DEFAULT_WINDOW_MS);
+  const refill = envInt("RL_REFILL", limit); // default refill = limit (preserves current behavior)
   switch (algo) {
     case "token-bucket":
       return new TokenBucketLimiter(store, {
-        capacity: TINY_LIMIT,
-        refillPerInterval: TINY_LIMIT,
-        intervalMs: WINDOW_MS,
+        capacity: limit,
+        refillPerInterval: refill,
+        intervalMs: windowMs,
       });
     case "sliding-window":
-      return new SlidingWindowLimiter(store, { limit: TINY_LIMIT, windowMs: WINDOW_MS });
+      return new SlidingWindowLimiter(store, { limit, windowMs });
     case "fixed-window":
-      return new FixedWindowLimiter(store, { limit: TINY_LIMIT, windowMs: WINDOW_MS });
+      return new FixedWindowLimiter(store, { limit, windowMs });
     default:
       throw new RangeError(
         `RL_ALGO must be token-bucket|sliding-window|fixed-window, got "${algo}"`,
