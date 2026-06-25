@@ -1,0 +1,16 @@
+# Keep the build context lean: never copy host artifacts or planning/docs into the image.
+node_modules
+dist
+.git
+.gitignore
+test
+coverage
+*.md
+*.log
+.planning
+.nvmrc
+.prettierrc
+eslint.config.js
+Dockerfile
+.dockerignore
+docker-compose.yml
