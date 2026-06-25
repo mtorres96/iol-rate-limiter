@@ -153,14 +153,24 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Conformance, Redis/Lua & Defensive Behavior | 5/5 | Complete   | 2026-06-24 |
 | 3. Express Middleware & HTTP Semantics | 3/3 | Complete   | 2026-06-25 |
 | 4. Demo, Docker & DESIGN.md | 3/3 | Complete   | 2026-06-25 |
-| 5. Quality, Swagger & Exercise Compliance | 0/? | Not planned | — |
+| 5. Quality, Swagger & Exercise Compliance | 0/3 | Planned | — |
 
 ### Phase 5: Quality, Swagger & Exercise Compliance
 
 **Goal:** Harden the finished deliverable for grading. Install supporting Claude skills (OpenAPI/Swagger, design patterns, code quality) and re-audit the codebase with them; verify the test suite is healthy and raise coverage to ≥95% on the core algorithms and adapters; add Swagger/OpenAPI documentation to the demo server if it strengthens the deliverable; and run a final gap audit of the implementation against the updated IOL challenge brief (`iol-challenge-actualizado` PDF in repo root) to confirm full compliance.
-**Requirements**: TBD (derive at plan-phase: coverage target, Swagger/OpenAPI, exercise-compliance audit)
+**Requirements**: CONTEXT decisions D-01..D-12 (coverage gate, Swagger/OpenAPI, audit + COMPLIANCE.md, targeted docs); hardens existing TEST-01/HTTP-02/HTTP-03/DELIV-03/DELIV-04/DELIV-06. OBS-01/02 (logging/metrics) are v2-deferred, OUT of scope.
 **Depends on:** Phase 4
-**Plans:** 0 plans
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 5 to break down)
+**Wave 1**
+
+- [ ] 05-01-PLAN.md — Coverage hardening: close branch gaps with no-source tests, fix AF-1/AF-2 lint, enable four-metric gate + wire verify (D-01..D-04)
+
+**Wave 2** *(blocked on 05-01 — shares package.json)*
+
+- [ ] 05-02-PLAN.md — Swagger/OpenAPI: legitimacy checkpoint + install (runtime dep), hand-written typed OpenAPI 3 spec, /docs + /openapi.json mount, supertest (D-05..D-08)
+
+**Wave 3** *(blocked on 05-01, 05-02)*
+
+- [ ] 05-03-PLAN.md — Skill-assisted audit + targeted doc-comments + COMPLIANCE.md brief→evidence map + README/DESIGN.md hardened-state updates (D-09..D-12)
