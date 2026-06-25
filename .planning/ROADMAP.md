@@ -132,7 +132,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 04-02-PLAN.md — Multi-stage non-root `node:24-alpine` Dockerfile + `.dockerignore` + Compose v2 (app + `redis:7.4-alpine`, healthcheck, depends_on service_healthy)
+- [x] 04-02-PLAN.md — Multi-stage non-root `node:24-alpine` Dockerfile + `.dockerignore` + Compose v2 (app + `redis:7.4-alpine`, healthcheck, depends_on service_healthy)
 
 **Wave 3** *(blocked on Wave 2)*
 
@@ -151,4 +151,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. Core, Algorithms & In-Memory Reference | 4/4 | Complete   | 2026-06-23 |
 | 2. Conformance, Redis/Lua & Defensive Behavior | 5/5 | Complete   | 2026-06-24 |
 | 3. Express Middleware & HTTP Semantics | 3/3 | Complete   | 2026-06-25 |
-| 4. Demo, Docker & DESIGN.md | 1/3 | In Progress|  |
+| 4. Demo, Docker & DESIGN.md | 2/3 | In Progress|  |
