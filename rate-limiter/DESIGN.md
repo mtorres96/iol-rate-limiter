@@ -202,11 +202,19 @@ client always sees its current allowance.
 `npm run verify` is the mandatory build-green gate. It is:
 
 ```
-npm run verify   ==   tsc --noEmit  &&  vitest run
+npm run verify   ==   tsc --noEmit  &&  vitest run --coverage  &&  eslint .
 ```
 
-That is, a **typecheck** followed by the **full test suite**. The build itself is also exercised
-inside the suite (a build-smoke test runs a real `tsup` build).
+That is, a **typecheck**, the **full test suite under a hard coverage gate**, and the **linter**.
+The build itself is also exercised inside the suite (a build-smoke test runs a real `tsup` build).
+
+The coverage gate (`vitest.config.ts`) enforces **≥ 95% on all four metrics** — lines, statements,
+functions, branches — over the *testable logic only* (the limiters, both stores, `validate.ts`,
+`clock.ts`, the Express adapter). The demo server, the barrels, and the `.lua` files are excluded:
+the `.lua` scripts are exercised through the real-Redis conformance/integration suites, and
+rolldown (the v8 remapper) cannot parse Lua. The current run measures 100% statements / 98.4%
+branches / 100% functions / 100% lines. A regression below the gate fails the run non-zero, which is
+what makes the gate mandatory.
 
 **A running Docker daemon is a prerequisite for `npm run verify`.** The suite's
 Redis-backed tests (integration, concurrency, conformance against real Redis, fault injection)
@@ -220,7 +228,36 @@ always exercises the real distributed Redis path rather than silently skipping i
 
 ---
 
-## 8. How AI was used (honest disclosure)
+## 8. API docs (Swagger) and the final audit fixes
+
+**Interactive docs.** The demo server serves **Swagger UI at `/docs`** (raw spec at
+`/openapi.json`) so the 200→429 behavior and the full header contract are visible and try-able in a
+browser — the part of this project most worth showing. The OpenAPI 3 document is a **hand-written,
+typed TypeScript object** (`src/demo/openapi.ts`, a `OpenAPIV3.Document` from the types-only
+`openapi-types`), **not** generated from JSDoc decorators or a codegen toolchain. That choice is
+deliberate: for two endpoints, codegen machinery reads as AI-slop and hides what is actually served,
+whereas a hand-authored object is line-by-line legible, `tsc` checks its shape at compile time, and
+`openapi-types` ships nothing to the runtime image. The docs routes are registered in the
+**unlimited zone** (alongside `/health`, before `app.use(rateLimit(...))`) because the Swagger UI
+pulls many static assets — rate-limiting the docs page would break it. `swagger-ui-express` is a
+**runtime** dependency (the Docker image runs `npm ci --omit=dev`, so a devDependency would
+`MODULE_NOT_FOUND` `/docs` in the container).
+
+**Final audit fixes (material only).** A skill-assisted re-audit was run before submission. Per the
+"fix material findings only, record the rest" discipline, the acted-on findings were: a single
+ESLint error (an unused test parameter) and two stale `eslint-disable` directives — both fixed — and
+the decision to **add `lint` to the `verify` gate** now that `eslint .` exits 0, so the single green
+gate covers typecheck, coverage, and lint. No working, tested code was refactored. The full
+brief→evidence map and the complete audit-disposition table (including the one justified
+`/* v8 ignore */` for a provably-unreachable sliding-window branch) are recorded in
+[COMPLIANCE.md](./COMPLIANCE.md).
+
+This phase deliberately did **not** add logging or metrics — those remain v2-deferred; the
+`DegradedLogger` hook is the seam where a structured logger would attach (see COMPLIANCE.md).
+
+---
+
+## 9. How AI was used (honest disclosure)
 
 This project was built **with AI assistance — specifically Claude Code, driven through a phased
 "GSD" (Get-Shit-Done) workflow**: *research → discuss → plan → execute → verify*, one phase at a
@@ -258,7 +295,7 @@ directly back to those files rather than being reconstructed after the fact.
 
 ---
 
-## 9. Scope note (this is a demo, honestly scoped)
+## 10. Scope note (this is a demo, honestly scoped)
 
 This is a **challenge deliverable and demo**, not a hardened production service, and the docs do
 not claim otherwise:

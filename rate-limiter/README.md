@@ -69,6 +69,17 @@ Both header families (IETF `RateLimit` / `RateLimit-Policy` and legacy `X-RateLi
 on **both** the allowed and the throttled response. All reset/retry values are **delta-seconds**
 (seconds from now), not epoch timestamps, and `Retry-After` is clamped to at least `1` on a `429`.
 
+### Interactive API docs (`/docs`)
+
+The running demo serves interactive **Swagger UI** at
+[`http://localhost:3000/docs`](http://localhost:3000/docs) (raw spec at
+`http://localhost:3000/openapi.json`). It documents both routes including the
+`200`/`429` responses and the full `RateLimit` / `X-RateLimit-*` / `Retry-After`
+header set, so the 200→429 semantics are visible and try-able in the browser. The
+OpenAPI spec is **hand-written** (`src/demo/openapi.ts`, no codegen) and the docs
+routes are registered outside the limiter so the UI's static assets are never
+throttled.
+
 ---
 
 ## Configuration
@@ -104,14 +115,25 @@ Then hit `http://localhost:3000/api/ping` exactly as above.
 ## Verify (a running Docker daemon is required)
 
 ```bash
-npm run verify        # == tsc --noEmit && vitest run
+npm run verify        # == tsc --noEmit && vitest run --coverage && eslint .
 ```
 
-**Start Docker before running `npm run verify`.** `verify` runs a typecheck and the **full** test
-suite, and the Redis-backed tests start an ephemeral `redis:7.4-alpine` container via
-testcontainers and run **unconditionally** — so a running Docker daemon is a hard prerequisite.
-Without it those tests cannot start a container. (See [DESIGN.md §7](./DESIGN.md) for why Docker is
-required rather than skipped.)
+**Start Docker before running `npm run verify`.** `verify` runs a typecheck, the **full** test
+suite under a coverage gate, and the linter. The Redis-backed tests start an ephemeral
+`redis:7.4-alpine` container via testcontainers and run **unconditionally** — so a running Docker
+daemon is a hard prerequisite. Without it those tests cannot start a container. (See
+[DESIGN.md §7](./DESIGN.md) for why Docker is required rather than skipped.)
+
+### Coverage
+
+The suite enforces a **hard coverage gate** over the testable logic (the limiters, both stores,
+`validate.ts`, `clock.ts`, and the Express adapter — the demo server, barrels, and `.lua` files are
+excluded). All four metrics are gated at **≥ 95%** in `vitest.config.ts`; the current run measures
+**100% statements / 98.4% branches / 100% functions / 100% lines** across **132 tests**. A
+regression below the gate fails `npm run verify` non-zero.
+
+A full brief→evidence compliance map and the audit dispositions live in
+**[COMPLIANCE.md](./COMPLIANCE.md)**.
 
 ---
 
