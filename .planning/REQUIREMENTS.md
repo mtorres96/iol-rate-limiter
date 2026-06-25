@@ -55,7 +55,7 @@ Requirements for the challenge deliverable. Each maps to roadmap phases.
 - [ ] **DELIV-01**: A demo HTTP server exercises the middleware end-to-end
 - [ ] **DELIV-02**: A single command (`docker compose up`) starts the demo backend AND Redis together — multi-stage Dockerfile (`node:24-alpine`, non-root) + docker-compose with a Redis service and healthcheck, no manual setup steps
 - [x] **DELIV-03**: `npm run verify` (typecheck + full test suite) passes from a clean checkout — enforced as a gate every phase
-- [ ] **DELIV-04**: `DESIGN.md` documents architecture, trade-offs (why Lua, fixed-window boundary, concurrency justification, fail-open/closed rationale, reset-header convention) and an honest AI-usage section
+- [x] **DELIV-04**: `DESIGN.md` documents architecture, trade-offs (why Lua, fixed-window boundary, concurrency justification, fail-open/closed rationale, reset-header convention) and an honest AI-usage section
 - [x] **DELIV-05**: Solution lives under a `/rate-limiter` folder per the submission rules
 - [x] **DELIV-06**: Score-boosting documentation — a README with a quickstart (one-command run, example requests) and architecture/data-flow diagrams (Mermaid) embedded in DESIGN.md/README illustrating the layered design and request path
 
@@ -121,7 +121,7 @@ Which phases cover which requirements. Populated during roadmap creation.
 | DELIV-01 | Phase 4 | Pending |
 | DELIV-02 | Phase 4 | Pending |
 | DELIV-03 | Phase 4 | Complete |
-| DELIV-04 | Phase 4 | Pending |
+| DELIV-04 | Phase 4 | Complete |
 | DELIV-05 | Phase 1 | Complete |
 | DELIV-06 | Phase 4 | Complete |
 

@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Conformance Harness, Redis/Lua Store & Defensive Behavior** - Shared conformance suite + atomic-Lua Redis store with timeouts and fail-open/closed, proven against real Redis (completed 2026-06-24)
 - [x] **Phase 3: Express Middleware & HTTP Semantics** - Per-key enforcement middleware with standards-correct headers, 429/Retry-After, and async error handling (completed 2026-06-25)
 - [x] **Phase 4: Demo, Docker & DESIGN.md** - One-command deployable demo + graded architecture/AI-usage documentation behind the final verification gate (completed 2026-06-25)
-- [ ] **Phase 5: Quality, Swagger & Exercise Compliance** - Skill-assisted re-audit, ≥95% coverage, optional Swagger/OpenAPI, and a final gap audit against the updated IOL challenge brief
+- [x] **Phase 5: Quality, Swagger & Exercise Compliance** - Skill-assisted re-audit, ≥95% coverage, optional Swagger/OpenAPI, and a final gap audit against the updated IOL challenge brief (completed 2026-06-25)
 
 ## Phase Details
 
@@ -153,14 +153,14 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Conformance, Redis/Lua & Defensive Behavior | 5/5 | Complete   | 2026-06-24 |
 | 3. Express Middleware & HTTP Semantics | 3/3 | Complete   | 2026-06-25 |
 | 4. Demo, Docker & DESIGN.md | 3/3 | Complete   | 2026-06-25 |
-| 5. Quality, Swagger & Exercise Compliance | 2/3 | In Progress|  |
+| 5. Quality, Swagger & Exercise Compliance | 3/3 | Complete   | 2026-06-25 |
 
 ### Phase 5: Quality, Swagger & Exercise Compliance
 
 **Goal:** Harden the finished deliverable for grading. Install supporting Claude skills (OpenAPI/Swagger, design patterns, code quality) and re-audit the codebase with them; verify the test suite is healthy and raise coverage to ≥95% on the core algorithms and adapters; add Swagger/OpenAPI documentation to the demo server if it strengthens the deliverable; and run a final gap audit of the implementation against the updated IOL challenge brief (`iol-challenge-actualizado` PDF in repo root) to confirm full compliance.
 **Requirements**: CONTEXT decisions D-01..D-12 (coverage gate, Swagger/OpenAPI, audit + COMPLIANCE.md, targeted docs); hardens existing TEST-01/HTTP-02/HTTP-03/DELIV-03/DELIV-04/DELIV-06. OBS-01/02 (logging/metrics) are v2-deferred, OUT of scope.
 **Depends on:** Phase 4
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 **Wave 1**
@@ -173,4 +173,4 @@ Plans:
 
 **Wave 3** *(blocked on 05-01, 05-02)*
 
-- [ ] 05-03-PLAN.md — Skill-assisted audit + targeted doc-comments + COMPLIANCE.md brief→evidence map + README/DESIGN.md hardened-state updates (D-09..D-12)
+- [x] 05-03-PLAN.md — Skill-assisted audit + targeted doc-comments + COMPLIANCE.md brief→evidence map + README/DESIGN.md hardened-state updates (D-09..D-12)

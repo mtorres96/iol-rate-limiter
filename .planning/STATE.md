@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
+status: verifying
 stopped_at: Phase 5 context gathered
-last_updated: "2026-06-25T21:32:48.967Z"
+last_updated: "2026-06-25T21:41:59.110Z"
 last_activity: 2026-06-25
 progress:
   total_phases: 5
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 18
-  completed_plans: 17
-  percent: 80
+  completed_plans: 18
+  percent: 100
 ---
 
 # Project State
@@ -27,10 +27,10 @@ See: .planning/PROJECT.md (updated 2026-06-23)
 
 Phase: 05 (quality-swagger-compliance) — EXECUTING
 Plan: 3 of 3
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-06-25
 
-Progress: [█████████░] 94%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -62,6 +62,7 @@ Progress: [█████████░] 94%
 | Phase 03 P03 | 2 | 3 tasks | 3 files |
 | Phase 05 P01 | 5 | 3 tasks | 8 files |
 | Phase 05 P02 | 12 | 3 tasks | 4 files |
+| Phase 05 P03 | 10 | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -90,6 +91,8 @@ Recent decisions affecting current work:
 - [Phase ?]: [Phase 03]: HTTP-01..04 verified via supertest (no Redis); fail-open/closed proven with throwing-stub RateLimiter; build-smoke guards the express subpath; build-green gate green (tsc + 117 tests).
 - [Phase ?]: [Phase 05]: Swagger docs = hand-written typed OpenAPIV3.Document (openapi-types, types-only) over YAML/codegen — tsc structural validation, zero runtime weight (D-06)
 - [Phase ?]: [Phase 05]: swagger-ui-express in dependencies (Docker npm ci --omit=dev); /docs + /openapi.json registered before app.use(rateLimit) so UI assets never throttled (D-07)
+- [Phase ?]: [Phase 05]: AF-3 resolved YES — lint added to the verify gate (verify = typecheck && coverage && lint); eslint . exits 0 after Plan 01 fixes
+- [Phase ?]: [Phase 05]: COMPLIANCE.md maps every brief item to real repo evidence; logging/metrics (OBS-01/02) honestly marked v2-deferred, never delivered (D-10)
 
 ### Pending Todos
 
@@ -109,6 +112,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-25T21:32:13.075Z
+Last session: 2026-06-25T21:41:46.046Z
 Stopped at: Phase 5 context gathered
 Resume file: None
