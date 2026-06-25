@@ -18,6 +18,7 @@ import { buildApp } from "../src/demo/server.js";
 afterEach(() => {
   delete process.env.RL_ALGO;
   delete process.env.REDIS_URL;
+  delete process.env.RL_LIMIT;
 });
 
 describe("demo metrics surface — OBS-02 (260625-s2j)", () => {
@@ -46,6 +47,29 @@ describe("demo metrics surface — OBS-02 (260625-s2j)", () => {
         const res = await request(app).get("/metrics");
         expect(res.status).toBe(200);
       }
+    } finally {
+      await close();
+    }
+  });
+
+  it("counts blocked decisions — over-limit /api/ping requests increment decision=blocked", async () => {
+    // Regression guard: the decision hook MUST be registered before the limiter, or a
+    // 429-short-circuited request never reaches it and "blocked" is silently never
+    // counted. Drive past a tiny limit and assert the blocked series is non-zero.
+    process.env.RL_LIMIT = "2";
+    const { app, close } = buildApp();
+    try {
+      for (let i = 0; i < 6; i++) {
+        await request(app).get("/api/ping"); // 2 allowed, then 429s
+      }
+      // res.on("finish") fires just after each response flushes; yield a macrotask so
+      // all finish handlers have recorded before we scrape /metrics.
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      const res = await request(app).get("/metrics");
+      expect(res.status).toBe(200);
+      expect(res.text).toMatch(
+        /rate_limiter_decisions_total\{decision="blocked"\}\s+[1-9]/,
+      );
     } finally {
       await close();
     }

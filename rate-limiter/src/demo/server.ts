@@ -160,20 +160,23 @@ export function buildApp(): { app: express.Express; close: () => Promise<void> }
     }
   });
 
-  // From here on, every route is rate-limited per req.ip (D4-04: lean on the
-  // rateLimit defaults — no key-extractor override).
-  app.use(rateLimit({ limiter }));
-
-  // Decision-recording hook (demo-tier metrics): the limiter above has already
-  // decided by the time the response finishes, so statusCode 429 ⇒ "blocked",
-  // otherwise "allowed". /metrics itself sits in the unlimited zone above, so it is
-  // never counted here. res.on("finish") keeps this out of the response hot path.
+  // Decision-recording hook (demo-tier metrics): registered BEFORE the limiter so the
+  // res.on("finish") listener is attached even when the limiter SHORT-CIRCUITS a
+  // blocked request with 429 — a rejected request never reaches middleware mounted
+  // *after* rateLimit, so counting it there would miss every "blocked". By the time
+  // "finish" fires the status is final: 429 ⇒ "blocked", otherwise "allowed". This
+  // sits below /health, /docs and /metrics (the unlimited zone registered above), so
+  // those are never counted. res.on("finish") keeps it off the response hot path.
   app.use((_req, res, next) => {
     res.on("finish", () =>
       recordDecision(res.statusCode === 429 ? "blocked" : "allowed"),
     );
     next();
   });
+
+  // From here on, every route is rate-limited per req.ip (D4-04: lean on the
+  // rateLimit defaults — no key-extractor override).
+  app.use(rateLimit({ limiter }));
 
   app.get("/api/ping", (_req, res) => {
     res.status(200).json({ pong: true });
