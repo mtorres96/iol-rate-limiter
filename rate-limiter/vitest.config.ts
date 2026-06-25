@@ -21,6 +21,26 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/**'],
+      // D-01: scope the gate to the real algorithm/adapter surface. The demo app
+      // and the barrel re-export files carry no branch logic to grade, and the
+      // `.lua` scripts are server-side Redis code that rolldown CANNOT parse
+      // (PARSE_ERROR) — excluding them keeps the gate meaningful and the run
+      // green instead of catering the global metric or crashing the coverage pass.
+      exclude: [
+        'src/demo/**',
+        'src/index.ts',
+        'src/adapters/express/index.ts',
+        'src/store/lua/**',
+      ],
+      // D-02: a HARD four-metric gate. All four must be >= 95 or the run fails —
+      // branches was the only metric below 95 (88.18%) before this plan closed
+      // the defensive arms with real tests.
+      thresholds: {
+        lines: 95,
+        statements: 95,
+        functions: 95,
+        branches: 95,
+      },
     },
   },
 });
