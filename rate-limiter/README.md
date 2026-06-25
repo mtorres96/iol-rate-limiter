@@ -97,16 +97,40 @@ an error at startup):
 | `RL_REFILL`    | `= RL_LIMIT`     | **Token Bucket only:** tokens refilled per interval (`refillPerInterval`). Ignored by the window algorithms. |
 | `PORT`         | `3000`           | HTTP listen port.                                                                               |
 
-Override the limit/window at run time without rebuilding, e.g.:
+Override the limit/window at run time without rebuilding or editing files. There are three
+distinct ways, depending on whether you want the real Redis path or the in-memory store:
+
+**(a) With Redis (compose), via shell interpolation** — the `app.environment` tunables in
+`docker-compose.yml` are `${VAR:-default}` interpolations, so a shell env var flows straight
+through (unset falls back to the defaults `5` / `60000`):
 
 ```bash
-docker run -e RL_LIMIT=10 -e RL_WINDOW_MS=10000 <image>
+RL_LIMIT=2 RL_WINDOW_MS=4000 docker compose up
 ```
 
-The same vars can be edited in the `app.environment` block of `docker-compose.yml`.
+**(b) With Redis, one-off run** — same real distributed Redis path, but a single throwaway run
+with explicit `-e` overrides (no edits to the shell environment):
+
+```bash
+docker compose run --rm --service-ports -e RL_LIMIT=2 -e RL_WINDOW_MS=4000 app
+```
+
+**(c) Standalone image, NO Redis (in-memory store)** — run the built image alone, with no Redis
+container; an unset `REDIS_URL` makes the demo fall back to the in-memory `MemoryStore`:
+
+```bash
+docker run --rm -p 3000:3000 -e RL_LIMIT=2 rate-limiter-app
+```
+
+Paths **(a)** and **(b)** exercise the real distributed **Redis** path (Compose sets
+`REDIS_URL=redis://redis:6379`). Path **(c)** uses the **in-memory store** because `REDIS_URL`
+is left unset.
+
+The same vars can also be edited directly in the `app.environment` block of `docker-compose.yml`.
 
 Under `docker compose up`, Compose sets `REDIS_URL=redis://redis:6379` (the real distributed path),
-`RL_ALGO=token-bucket`, and the tunable `RL_LIMIT` / `RL_WINDOW_MS` / `RL_REFILL` defaults.
+and resolves `RL_ALGO` / `RL_LIMIT` / `RL_WINDOW_MS` / `RL_REFILL` from the shell (defaulting to
+`token-bucket` / `5` / `60000` / `5` when unset).
 
 ### Run standalone, without Docker
 
