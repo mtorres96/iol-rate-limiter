@@ -98,7 +98,11 @@ export function rateLimit(options: RateLimitOptions): RequestHandler {
         return next(); // availability over strictness — admit.
       }
       // fail-closed: deny. There is no `Decision` to build budget headers from
-      // (Pitfall 4), so we send a bare 429 JSON.
+      // (Pitfall 4), so we send a bare 429 JSON with a minimal `Retry-After: 1`
+      // hint. The explicit `return` here is the ONLY exit for the error path —
+      // no code may run below the try/catch, or it would execute after the
+      // response is sent (ERR_HTTP_HEADERS_SENT).
+      res.setHeader('Retry-After', '1');
       res.status(429).json({ error: 'Too Many Requests' });
       return;
     }
@@ -126,7 +130,11 @@ function sendThrottled(
   decision: Decision,
   options: RateLimitOptions,
 ): void {
-  res.setHeader('Retry-After', String(Math.ceil(decision.retryAfterMs / 1000)));
+  // `retryAfterMs === 0` on a throttled response is a data-contract violation
+  // (a 429 that says "wait zero seconds" defeats the limiter). Clamp to at least
+  // 1 s so `Retry-After` is never "0" on a 429 (RFC 9110 §10.2.3).
+  const retryAfterS = Math.max(1, Math.ceil(decision.retryAfterMs / 1000));
+  res.setHeader('Retry-After', String(retryAfterS));
   if (options.handler) {
     options.handler(req, res, decision); // handler OWNS the body.
     return;
