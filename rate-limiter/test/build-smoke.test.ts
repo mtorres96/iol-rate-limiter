@@ -22,6 +22,10 @@ const luaScripts = ["token-bucket.lua", "sliding-window.lua", "fixed-window.lua"
 const expressSubpathAssets = [
   "adapters/express/index.js",
   "adapters/express/index.d.ts",
+  // Plan 04-01's THIRD tsup entry: the demo server is the Docker runtime
+  // entrypoint (`node dist/demo/server.js`). A dropped third entry would
+  // MODULE_NOT_FOUND the container at startup (Pitfall 3), so assert it lands.
+  "demo/server.js",
 ];
 
 describe("build ships the assets into dist", () => {

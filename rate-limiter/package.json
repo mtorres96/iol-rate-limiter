@@ -19,7 +19,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
+    "verify": "npm run typecheck && npm run test",
     "build": "tsup",
+    "start": "node dist/demo/server.js",
+    "dev": "tsx watch src/demo/server.ts",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
@@ -38,6 +41,7 @@
     "supertest": "^7.2.2",
     "testcontainers": "^12.0.3",
     "tsup": "^8.5.1",
+    "tsx": "^4.22.4",
     "typescript": "~5.9",
     "typescript-eslint": "^8.62.0",
     "vitest": "^4.1.9"
