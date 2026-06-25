@@ -99,6 +99,12 @@ Recent decisions affecting current work:
 
 None yet.
 
+### Quick Tasks Completed
+
+| ID | Description | Date | Commit | Link |
+|----|-------------|------|--------|------|
+| 260625-qji | Make demo rate-limiter window/limit configurable via env vars (RL_LIMIT / RL_WINDOW_MS / RL_REFILL) | 2026-06-25 | a308416 | [260625-qji-make-demo-rate-limiter-window-and-limit-](./quick/260625-qji-make-demo-rate-limiter-window-and-limit-/) |
+
 ### Blockers/Concerns
 
 - [Phase 2]: Per-algorithm Lua contracts (KEYS/ARGV layout, TTL sizing, return-tuple shape) and conformance-harness shape are MEDIUM-confidence — run `--research-phase` before writing scripts.
