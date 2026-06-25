@@ -9,7 +9,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
-# tsup emits dist/ including dist/demo/server.js and copies dist/store/lua/*.lua.
+# tsup emits dist/ including dist/demo/server.js and copies dist/lua/*.lua.
 RUN npm run build
 
 # ---- runtime stage ----
@@ -19,7 +19,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 # Production deps only -> just ioredis (no tsup/tsx/test tooling in the image).
 RUN npm ci --omit=dev
-# Copy the WHOLE dist so the Redis Lua scripts (dist/store/lua/*.lua) survive.
+# Copy the WHOLE dist so the Redis Lua scripts (dist/lua/*.lua) survive.
 COPY --from=build /app/dist ./dist
 # Built-in non-root user shipped by the node image.
 USER node
