@@ -24,6 +24,10 @@ algorithms must provably enforce their limits.
 - [x] **Express middleware** adapter that enforces limits per client key — *Validated in Phase 3: express-middleware-http-semantics*
 - [x] Standard rate-limit response headers (IETF `RateLimit`/`RateLimit-Policy` + legacy
       `X-RateLimit-*`) and `429 Too Many Requests` with `Retry-After` — *Validated in Phase 3*
+- [x] Comprehensive unit tests for core algorithms (Vitest), including concurrency/time edges,
+      behind a hard four-metric ≥95% coverage gate — *Validated in Phase 5: quality-swagger-compliance*
+- [x] Swagger/OpenAPI documentation on the demo server (`/docs` + `/openapi.json`) plus a
+      `COMPLIANCE.md` brief→evidence map — *Validated in Phase 5*
 
 ### Active
 
@@ -39,7 +43,6 @@ algorithms must provably enforce their limits.
 - [x] Defensive design: Redis call timeouts + configurable fail-open / fail-closed policy
       (Redis-side validated in Phase 2; HTTP-edge fail-open/closed validated in Phase 3)
 - [ ] Demo HTTP server exercising the middleware
-- [ ] Comprehensive unit tests for core algorithms (Vitest), including concurrency/time edges
 - [ ] Docker + docker-compose for app + Redis (ease of deployment)
 - [ ] `DESIGN.md` documenting architecture, trade-offs, and how AI was used
 
@@ -115,4 +118,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-25 — Phase 3 complete (Express middleware + HTTP semantics; in-memory, no Redis dependency)*
+*Last updated: 2026-06-25 — Phase 5 complete (quality hardening: ≥95% four-metric coverage gate, Swagger/OpenAPI docs, COMPLIANCE.md audit). Milestone v1.0 complete.*
