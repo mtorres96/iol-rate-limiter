@@ -18,10 +18,10 @@ services:
     environment:
       REDIS_URL: redis://redis:6379 # Real distributed path under compose (D4-01).
       PORT: "3000"
-      RL_ALGO: token-bucket # Default algorithm; switchable across the three limiters.
-      RL_LIMIT: "5" # Tunable: allowed budget (capacity / limit); default 5.
-      RL_WINDOW_MS: "60000" # Tunable: interval / window in ms; default 60000.
-      RL_REFILL: "5" # Tunable: token-bucket refill per interval; default = RL_LIMIT.
+      RL_ALGO: "${RL_ALGO:-token-bucket}" # Default algorithm; shell-overridable, default token-bucket.
+      RL_LIMIT: "${RL_LIMIT:-5}" # Tunable: allowed budget (capacity / limit); shell-overridable, default 5.
+      RL_WINDOW_MS: "${RL_WINDOW_MS:-60000}" # Tunable: interval / window in ms; shell-overridable, default 60000.
+      RL_REFILL: "${RL_REFILL:-5}" # Tunable: token-bucket refill per interval; shell-overridable, default 5.
     ports:
       - "3000:3000"
     depends_on:
