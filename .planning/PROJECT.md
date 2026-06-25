@@ -21,7 +21,9 @@ algorithms must provably enforce their limits.
 
 <!-- Shipped and confirmed valuable. -->
 
-(None yet — ship to validate)
+- [x] **Express middleware** adapter that enforces limits per client key — *Validated in Phase 3: express-middleware-http-semantics*
+- [x] Standard rate-limit response headers (IETF `RateLimit`/`RateLimit-Policy` + legacy
+      `X-RateLimit-*`) and `429 Too Many Requests` with `Retry-After` — *Validated in Phase 3*
 
 ### Active
 
@@ -34,10 +36,8 @@ algorithms must provably enforce their limits.
 - [ ] Pluggable `Store` interface for limiter state
 - [ ] **In-memory** store implementation (single-node, used by tests)
 - [ ] **Redis** store implementation using atomic Lua scripts (distributed correctness)
-- [ ] **Express middleware** adapter that enforces limits per client key
-- [ ] Standard rate-limit response headers (`X-RateLimit-Limit`, `X-RateLimit-Remaining`,
-      `X-RateLimit-Reset`, `Retry-After`) and `429 Too Many Requests`
-- [ ] Defensive design: Redis call timeouts + configurable fail-open / fail-closed policy
+- [x] Defensive design: Redis call timeouts + configurable fail-open / fail-closed policy
+      (Redis-side validated in Phase 2; HTTP-edge fail-open/closed validated in Phase 3)
 - [ ] Demo HTTP server exercising the middleware
 - [ ] Comprehensive unit tests for core algorithms (Vitest), including concurrency/time edges
 - [ ] Docker + docker-compose for app + Redis (ease of deployment)
@@ -115,4 +115,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-23 after initialization*
+*Last updated: 2026-06-25 — Phase 3 complete (Express middleware + HTTP semantics; in-memory, no Redis dependency)*
