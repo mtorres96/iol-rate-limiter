@@ -32,10 +32,12 @@
     "@types/express": "^5.0.6",
     "@types/node": "^24.13.2",
     "@types/supertest": "^7.2.0",
+    "@types/swagger-ui-express": "^4.1.8",
     "@vitest/coverage-v8": "4.1.9",
     "dockerode": "^5.0.0",
     "eslint": "^10.5.0",
     "eslint-config-prettier": "^10.1.8",
+    "openapi-types": "^12.1.3",
     "prettier": "^3.8.4",
     "supertest": "^7.2.2",
     "testcontainers": "^12.0.3",
@@ -46,8 +48,9 @@
     "vitest": "^4.1.9"
   },
   "dependencies": {
-    "express": "^5.2.1",
-    "ioredis": "^5.11.1"
+    "express": ">=5",
+    "ioredis": "^5.11.1",
+    "swagger-ui-express": "^5.0.1"
   },
   "peerDependencies": {
     "express": ">=5"
