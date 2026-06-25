@@ -22,12 +22,16 @@
   "devDependencies": {
     "@testcontainers/redis": "^12.0.3",
     "@types/dockerode": "^4.0.1",
+    "@types/express": "^5.0.6",
     "@types/node": "^24.13.2",
+    "@types/supertest": "^7.2.0",
     "@vitest/coverage-v8": "4.1.9",
     "dockerode": "^5.0.0",
     "eslint": "^10.5.0",
     "eslint-config-prettier": "^10.1.8",
+    "express": "^5.2.1",
     "prettier": "^3.8.4",
+    "supertest": "^7.2.2",
     "testcontainers": "^12.0.3",
     "tsup": "^8.5.1",
     "typescript": "~5.9",
@@ -36,5 +40,8 @@
   },
   "dependencies": {
     "ioredis": "^5.11.1"
+  },
+  "peerDependencies": {
+    "express": ">=5"
   }
 }
