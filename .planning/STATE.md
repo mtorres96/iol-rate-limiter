@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Phase 3 context gathered
-last_updated: "2026-06-25T01:24:18.703Z"
+last_updated: "2026-06-25T01:29:49.848Z"
 last_activity: 2026-06-25
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 12
-  completed_plans: 10
+  completed_plans: 11
   percent: 50
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-06-23)
 ## Current Position
 
 Phase: 03 (express-middleware-http-semantics) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-06-25
 
-Progress: [████████░░] 83%
+Progress: [█████████░] 92%
 
 ## Performance Metrics
 
@@ -57,6 +57,7 @@ Progress: [████████░░] 83%
 | Phase 01 P03 | 3 | 2 tasks | 5 files |
 | Phase 01 P04 | 6 | 2 tasks | 4 files |
 | Phase 03 P01 | 1 | 3 tasks | 3 files |
+| Phase 03 P02 | 2 | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -77,6 +78,7 @@ Recent decisions affecting current work:
 - [Phase 01]: Sliding-window retryAfterMs is best-effort (boundary when curr alone over-limit; else previous-window linear decay, clamped)
 - [Phase 01]: Sliding-window tests log curr at the 50% mark (overlap 0.5) to reproduce Xu Ch.4 prev=5/curr=3/floor(5.5)=5/remaining=1 verbatim; over-admission guard proven via Promise.all burst → exactly `limit` admitted (event-loop atomicity, no mutex); 19 tests green, tsc + eslint clean
 - [Phase ?]: [Phase 03]: express is a peerDependency (>=5) + devDep, never a runtime dependency; rate-limiter/express subpath wired via second tsup entry + exports map (source in 03-02, build-smoke in 03-03)
+- [Phase ?]: [Phase 03]: Express adapter under src/adapters/express/** (tier boundary); single toSeconds=ceil(ms/1000) edge helper; IETF draft-11 + legacy headers; middleware-owned fail-open/closed try-catch never leaks to Express error handler; reuses core RateLimitPolicy/DegradedLogger (no new types)
 
 ### Pending Todos
 
@@ -96,6 +98,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-25T01:24:05.469Z
+Last session: 2026-06-25T01:29:45.872Z
 Stopped at: Phase 3 context gathered
 Resume file: None

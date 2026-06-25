@@ -103,7 +103,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 03-02-PLAN.md — Adapter source: headers.ts (IETF draft-11 + legacy) + rateLimit() factory with fail-open/closed policy + adapter barrel
+- [x] 03-02-PLAN.md — Adapter source: headers.ts (IETF draft-11 + legacy) + rateLimit() factory with fail-open/closed policy + adapter barrel
 
 **Wave 3** *(blocked on Wave 2)*
 
@@ -136,5 +136,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 |-------|----------------|--------|-----------|
 | 1. Core, Algorithms & In-Memory Reference | 4/4 | Complete   | 2026-06-23 |
 | 2. Conformance, Redis/Lua & Defensive Behavior | 5/5 | Complete   | 2026-06-24 |
-| 3. Express Middleware & HTTP Semantics | 1/3 | In Progress|  |
+| 3. Express Middleware & HTTP Semantics | 2/3 | In Progress|  |
 | 4. Demo, Docker & DESIGN.md | 0/TBD | Not started | - |

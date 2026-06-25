@@ -37,10 +37,10 @@ Requirements for the challenge deliverable. Each maps to roadmap phases.
 
 ### HTTP Integration
 
-- [ ] **HTTP-01**: An Express middleware enforces a limiter per extracted client key
-- [ ] **HTTP-02**: Over-limit requests receive `429 Too Many Requests` with a `Retry-After` header
-- [ ] **HTTP-03**: Rate-limit headers are emitted on both allowed and rejected responses (IETF `RateLimit`/`RateLimit-Policy` + legacy `X-RateLimit-*`), with `remaining` as an integer and a consistent `reset` unit
-- [ ] **HTTP-04**: Middleware handles async/store errors without crashing the request (honors the fail-open/closed policy)
+- [x] **HTTP-01**: An Express middleware enforces a limiter per extracted client key
+- [x] **HTTP-02**: Over-limit requests receive `429 Too Many Requests` with a `Retry-After` header
+- [x] **HTTP-03**: Rate-limit headers are emitted on both allowed and rejected responses (IETF `RateLimit`/`RateLimit-Policy` + legacy `X-RateLimit-*`), with `remaining` as an integer and a consistent `reset` unit
+- [x] **HTTP-04**: Middleware handles async/store errors without crashing the request (honors the fail-open/closed policy)
 
 ### Testing
 
@@ -109,10 +109,10 @@ Which phases cover which requirements. Populated during roadmap creation.
 | STOR-05 | Phase 2 | Pending |
 | DEF-01 | Phase 2 | Pending |
 | DEF-02 | Phase 2 | Pending |
-| HTTP-01 | Phase 3 | Pending |
-| HTTP-02 | Phase 3 | Pending |
-| HTTP-03 | Phase 3 | Pending |
-| HTTP-04 | Phase 3 | Pending |
+| HTTP-01 | Phase 3 | Complete |
+| HTTP-02 | Phase 3 | Complete |
+| HTTP-03 | Phase 3 | Complete |
+| HTTP-04 | Phase 3 | Complete |
 | TEST-01 | Phase 1 | Complete |
 | TEST-02 | Phase 2 | Pending |
 | TEST-03 | Phase 2 | Pending |
