@@ -164,6 +164,12 @@ export class MemoryStore implements Store {
       // prev decays linearly over `windowMs`; ms per one request of weight =
       // windowMs / prev. Solve floor(curr + prev*frac') + cost <= limit.
       const overshoot = flooredEstimate + cost - cfg.limit; // > 0 here
+      // The `prev === 0` fallback is unreachable here: this `else` runs only when
+      // `curr + cost <= limit` (the `else if` above was false), and with prev===0
+      // we'd have flooredEstimate === curr, making `curr + cost <= limit` an ADMIT
+      // — so the reject path can never see prev===0. Kept as a defensive guard for
+      // the Lua-parity arithmetic; the dead else-branch is excluded from coverage.
+      /* v8 ignore next -- prev===0 unreachable given the curr+cost>limit guard above @preserve */
       const msToDecayOne = prev > 0 ? cfg.windowMs / prev : msToBoundary;
       retryAfterMs = Math.min(
         Math.ceil(overshoot * msToDecayOne), // CEIL: D-03; matches Lua math.ceil(...)
