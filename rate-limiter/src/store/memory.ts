@@ -189,7 +189,10 @@ export class MemoryStore implements Store {
    *
    * The 2×-at-the-boundary burst (admit `limit` at the end of window N and
    * `limit` again at the start of N+1) is REQUIRED behavior to exhibit — do NOT
-   * add any smoothing (ALGO-03 / Pitfall 4).
+   * add any smoothing (ALGO-03 / Pitfall 4). The hard reset at the bucket edge
+   * (count restarts at 0 the instant `bucket` changes) IS the burst: it is the
+   * deliberate teaching contrast to Sliding Window's weighted blend (DESIGN §3),
+   * not a defect to fix here.
    */
   fixedWindow(key: string, cfg: WindowConfig, cost: number, now: number): Promise<OpTuple> {
     const bucket = Math.floor(now / cfg.windowMs);
