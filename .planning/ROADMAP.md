@@ -153,19 +153,19 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Conformance, Redis/Lua & Defensive Behavior | 5/5 | Complete   | 2026-06-24 |
 | 3. Express Middleware & HTTP Semantics | 3/3 | Complete   | 2026-06-25 |
 | 4. Demo, Docker & DESIGN.md | 3/3 | Complete   | 2026-06-25 |
-| 5. Quality, Swagger & Exercise Compliance | 0/3 | Planned | — |
+| 5. Quality, Swagger & Exercise Compliance | 1/3 | In Progress|  |
 
 ### Phase 5: Quality, Swagger & Exercise Compliance
 
 **Goal:** Harden the finished deliverable for grading. Install supporting Claude skills (OpenAPI/Swagger, design patterns, code quality) and re-audit the codebase with them; verify the test suite is healthy and raise coverage to ≥95% on the core algorithms and adapters; add Swagger/OpenAPI documentation to the demo server if it strengthens the deliverable; and run a final gap audit of the implementation against the updated IOL challenge brief (`iol-challenge-actualizado` PDF in repo root) to confirm full compliance.
 **Requirements**: CONTEXT decisions D-01..D-12 (coverage gate, Swagger/OpenAPI, audit + COMPLIANCE.md, targeted docs); hardens existing TEST-01/HTTP-02/HTTP-03/DELIV-03/DELIV-04/DELIV-06. OBS-01/02 (logging/metrics) are v2-deferred, OUT of scope.
 **Depends on:** Phase 4
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 05-01-PLAN.md — Coverage hardening: close branch gaps with no-source tests, fix AF-1/AF-2 lint, enable four-metric gate + wire verify (D-01..D-04)
+- [x] 05-01-PLAN.md — Coverage hardening: close branch gaps with no-source tests, fix AF-1/AF-2 lint, enable four-metric gate + wire verify (D-01..D-04)
 
 **Wave 2** *(blocked on 05-01 — shares package.json)*
 
