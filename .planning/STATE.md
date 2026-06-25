@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Phase 3 context gathered
-last_updated: "2026-06-25T01:00:36.827Z"
-last_activity: 2026-06-25 -- Phase 03 planning complete
+last_updated: "2026-06-25T01:24:18.703Z"
+last_activity: 2026-06-25
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 12
-  completed_plans: 9
+  completed_plans: 10
   percent: 50
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-23)
 
 **Core value:** The core rate-limiting algorithms must be correct under concurrency and comprehensively tested, including time-based and race-condition edge cases.
-**Current focus:** Phase 02 — conformance-harness-redis-lua-store-defensive-behavior
+**Current focus:** Phase 03 — express-middleware-http-semantics
 
 ## Current Position
 
-Phase: 02 — COMPLETE
-Plan: 1 of 5
+Phase: 03 (express-middleware-http-semantics) — EXECUTING
+Plan: 2 of 3
 Status: Ready to execute
-Last activity: 2026-06-25 -- Phase 03 planning complete
+Last activity: 2026-06-25
 
-Progress: [██████████] 100%
+Progress: [████████░░] 83%
 
 ## Performance Metrics
 
@@ -56,6 +56,7 @@ Progress: [██████████] 100%
 | Phase 01 P02 | 1 | 2 tasks | 2 files |
 | Phase 01 P03 | 3 | 2 tasks | 5 files |
 | Phase 01 P04 | 6 | 2 tasks | 4 files |
+| Phase 03 P01 | 1 | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -75,6 +76,7 @@ Recent decisions affecting current work:
 - [Phase 01]: Three thin limiters wrap the matching store op and assemble Decision (D-07/D-12); config validated at construction (RangeError on non-positive/NaN/non-finite, T-01-06)
 - [Phase 01]: Sliding-window retryAfterMs is best-effort (boundary when curr alone over-limit; else previous-window linear decay, clamped)
 - [Phase 01]: Sliding-window tests log curr at the 50% mark (overlap 0.5) to reproduce Xu Ch.4 prev=5/curr=3/floor(5.5)=5/remaining=1 verbatim; over-admission guard proven via Promise.all burst → exactly `limit` admitted (event-loop atomicity, no mutex); 19 tests green, tsc + eslint clean
+- [Phase ?]: [Phase 03]: express is a peerDependency (>=5) + devDep, never a runtime dependency; rate-limiter/express subpath wired via second tsup entry + exports map (source in 03-02, build-smoke in 03-03)
 
 ### Pending Todos
 
@@ -94,6 +96,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-24T23:40:37.880Z
+Last session: 2026-06-25T01:24:05.469Z
 Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-express-middleware-http-semantics/03-CONTEXT.md
+Resume file: None
