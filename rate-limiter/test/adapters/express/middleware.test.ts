@@ -51,9 +51,10 @@ describe("rateLimit middleware — admit→429 + headers (HTTP-01/02/03)", () =>
     expect(ok.status).toBe(200);
     expect(ok.text).toBe("ok");
 
-    // IETF draft-11 List-of-Items form: `RateLimit: "default";r=<remaining>;t=<reset>`.
-    expect(ok.headers["ratelimit"]).toMatch(/^"default";r=\d+;t=\d+$/);
-    expect(ok.headers["ratelimit-policy"]).toContain('"default";q=1');
+    // IETF draft-11 List-of-Items form: `RateLimit: default;r=<remaining>;t=<reset>`.
+    // The policy name is an unquoted sf-token (`default`), not a quoted sf-string.
+    expect(ok.headers["ratelimit"]).toMatch(/^default;r=\d+;t=\d+$/);
+    expect(ok.headers["ratelimit-policy"]).toContain('default;q=1');
 
     // Legacy `X-RateLimit-*`: integer `remaining` ("0" — the single token is spent).
     expect(ok.headers["x-ratelimit-remaining"]).toBe("0");
@@ -79,13 +80,36 @@ describe("rateLimit middleware — admit→429 + headers (HTTP-01/02/03)", () =>
     expect(blocked.headers["retry-after"]).toBeDefined();
 
     // D3-04: the budget headers STILL appear on the rejected response.
-    expect(blocked.headers["ratelimit"]).toMatch(/^"default";r=\d+;t=\d+$/);
+    expect(blocked.headers["ratelimit"]).toMatch(/^default;r=\d+;t=\d+$/);
     expect(blocked.headers["x-ratelimit-remaining"]).toBe("0");
 
     // Default 429 JSON body carries `error` + machine-readable `retryAfterMs`.
     expect(blocked.body).toMatchObject({ error: expect.any(String) });
     expect(typeof blocked.body.retryAfterMs).toBe("number");
     expect(blocked.body.retryAfterMs).toBeGreaterThan(0);
+  });
+
+  it("custom handler owns the 429 body but standard headers are still present", async () => {
+    const limiter = oneShotLimiter();
+    const app = express();
+    app.use(
+      rateLimit({
+        limiter,
+        keyGenerator: () => "k1",
+        handler: (_req, res, _d) => res.status(429).json({ custom: true }),
+      }),
+    );
+    app.get("/", (_req, res) => res.send("ok"));
+
+    await request(app).get("/"); // drains the single token
+    const blocked = await request(app).get("/");
+
+    expect(blocked.status).toBe(429);
+    expect(blocked.body).toEqual({ custom: true });
+    // Standard headers must still be present even with a custom handler:
+    // `setRateLimitHeaders` + `Retry-After` run BEFORE the handler branch.
+    expect(blocked.headers["retry-after"]).toBeDefined();
+    expect(blocked.headers["ratelimit"]).toBeDefined();
   });
 });
 

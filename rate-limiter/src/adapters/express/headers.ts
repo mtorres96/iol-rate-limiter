@@ -47,8 +47,11 @@ export function setRateLimitHeaders(
     // draft-11 List-of-Items form (NOT the draft-07 dictionary `key=value` form).
     // `;w=<windowSeconds>` is appended to the policy ONLY when a window is supplied.
     const wPart = opts.windowSeconds != null ? `;w=${opts.windowSeconds}` : '';
-    res.setHeader('RateLimit-Policy', `"default";q=${d.limit}${wPart}`);
-    res.setHeader('RateLimit', `"default";r=${d.remaining};t=${resetS}`);
+    // draft-11: the policy name is an `sf-token` (bare `default`), NOT an
+    // `sf-string` (`"default"`). A strict Structured-Fields parser rejects the
+    // quoted form, so emit the unquoted token.
+    res.setHeader('RateLimit-Policy', `default;q=${d.limit}${wPart}`);
+    res.setHeader('RateLimit', `default;r=${d.remaining};t=${resetS}`);
   }
 
   if (mode === 'both' || mode === 'legacy') {
