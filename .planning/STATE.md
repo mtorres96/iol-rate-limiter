@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Phase 4 context gathered
-last_updated: "2026-06-25T05:19:58.115Z"
-last_activity: 2026-06-25 -- Phase 04 marked complete
+status: executing
+stopped_at: Phase 5 added (not planned)
+last_updated: "2026-06-25T05:26:00.000Z"
+last_activity: 2026-06-25 -- Phase 05 added to roadmap
 progress:
-  total_phases: 4
+  total_phases: 5
   completed_phases: 4
   total_plans: 15
   completed_plans: 15
-  percent: 100
+  percent: 80
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-23)
 
 **Core value:** The core rate-limiting algorithms must be correct under concurrency and comprehensively tested, including time-based and race-condition edge cases.
-**Current focus:** Phase 04 — demo-docker-design-md
+**Current focus:** Phase 05 — quality, swagger & exercise compliance (not planned yet)
 
 ## Current Position
 
-Phase: 04 — COMPLETE
-Plan: 1 of 3
-Status: Phase 04 complete
-Last activity: 2026-06-25 -- Phase 04 marked complete
+Phase: 05 — Not planned
+Plan: none yet
+Status: Phase 05 added to roadmap; run /gsd-plan-phase 5 to break it down
+Last activity: 2026-06-25 -- Phase 05 added to roadmap
 
-Progress: [██████████] 100%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
@@ -62,6 +62,10 @@ Progress: [██████████] 100%
 | Phase 03 P03 | 2 | 3 tasks | 3 files |
 
 ## Accumulated Context
+
+### Roadmap Evolution
+
+- Phase 5 added (2026-06-25): Quality, Swagger & Exercise Compliance — skill-assisted re-audit, ≥95% coverage, optional Swagger/OpenAPI, and a final gap audit against the updated IOL challenge brief (`iol-challenge-actualizado` PDF). Added after milestone v1.0's original 4 phases were complete; milestone reopened to executing.
 
 ### Decisions
 

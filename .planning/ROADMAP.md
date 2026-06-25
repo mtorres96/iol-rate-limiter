@@ -17,6 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Conformance Harness, Redis/Lua Store & Defensive Behavior** - Shared conformance suite + atomic-Lua Redis store with timeouts and fail-open/closed, proven against real Redis (completed 2026-06-24)
 - [x] **Phase 3: Express Middleware & HTTP Semantics** - Per-key enforcement middleware with standards-correct headers, 429/Retry-After, and async error handling (completed 2026-06-25)
 - [x] **Phase 4: Demo, Docker & DESIGN.md** - One-command deployable demo + graded architecture/AI-usage documentation behind the final verification gate (completed 2026-06-25)
+- [ ] **Phase 5: Quality, Swagger & Exercise Compliance** - Skill-assisted re-audit, ≥95% coverage, optional Swagger/OpenAPI, and a final gap audit against the updated IOL challenge brief
 
 ## Phase Details
 
@@ -143,8 +144,8 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4
-(Phase 3 may begin in parallel once Phase 1 completes; Phase 4 requires Phases 2 and 3.)
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
+(Phase 3 may begin in parallel once Phase 1 completes; Phase 4 requires Phases 2 and 3; Phase 5 is a post-delivery hardening/audit pass that requires Phase 4.)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -152,3 +153,14 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 2. Conformance, Redis/Lua & Defensive Behavior | 5/5 | Complete   | 2026-06-24 |
 | 3. Express Middleware & HTTP Semantics | 3/3 | Complete   | 2026-06-25 |
 | 4. Demo, Docker & DESIGN.md | 3/3 | Complete   | 2026-06-25 |
+| 5. Quality, Swagger & Exercise Compliance | 0/? | Not planned | — |
+
+### Phase 5: Quality, Swagger & Exercise Compliance
+
+**Goal:** Harden the finished deliverable for grading. Install supporting Claude skills (OpenAPI/Swagger, design patterns, code quality) and re-audit the codebase with them; verify the test suite is healthy and raise coverage to ≥95% on the core algorithms and adapters; add Swagger/OpenAPI documentation to the demo server if it strengthens the deliverable; and run a final gap audit of the implementation against the updated IOL challenge brief (`iol-challenge-actualizado` PDF in repo root) to confirm full compliance.
+**Requirements**: TBD (derive at plan-phase: coverage target, Swagger/OpenAPI, exercise-compliance audit)
+**Depends on:** Phase 4
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 5 to break down)
