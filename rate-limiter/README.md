@@ -94,9 +94,11 @@ Three access points:
 - **Prometheus** — [`http://localhost:9090`](http://localhost:9090): scrapes `app:3000/metrics`
   on the internal compose network every ~5s.
 - **Grafana** — [`http://localhost:3001`](http://localhost:3001): **anonymous, no login**
-  (host port **3001** because the app already uses 3000 → Grafana's container 3000). A
-  pre-provisioned **"Allowed vs Blocked"** dashboard (`rate(rate_limiter_decisions_total[1m])`
-  by `{{decision}}`) plus default-metric panels load automatically.
+  (host port **3001** because the app already uses 3000 → Grafana's container 3000). Opens
+  **directly** on the pre-provisioned **"Rate Limiter — Allowed vs Blocked"** dashboard
+  (`rate(rate_limiter_decisions_total[1m])` by `{{decision}}`, plus default-metric panels) —
+  it is set as Grafana's home dashboard, so the landing page is the dashboard itself with no
+  manual navigation.
 
 Fire a few `/api/ping` requests (and trip a `429` as shown above), then watch the allowed/blocked
 lines move in Grafana.
