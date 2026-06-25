@@ -497,20 +497,20 @@ The code is already well-commented — treat additions as exceptions.
 | A3 | Adding the D-01 excludes + the enumerated branch tests is sufficient to clear all four metrics ≥95 | Coverage Gap Analysis | Branches is at 88.18%; the enumerated gaps account for the visible shortfall, but a previously-hidden branch could surface once demo/lua are excluded. **Mitigation:** re-run coverage after each test addition; the live numbers give a tight estimate. |
 | A4 | swagger-ui-express has no malicious postinstall | Package Legitimacy Audit | Verified `scripts` has no postinstall today; re-confirm at install (versions can change). |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Should `lint` join the `verify` gate?**
+1. **Should `lint` join the `verify` gate?** — RESOLVED: handled in 05-03 Task 1 — both yes/no paths covered.
    - What we know: D-03 specifies typecheck + coverage; `eslint` currently exits 1 (AF-1).
    - What's unclear: Whether the user wants lint mandatory.
    - Recommendation: Fix AF-1/AF-2 regardless (material, D-09). Adding lint to `verify` is a sound
      hardening but is the planner's/user's call — record the decision in COMPLIANCE.md/DESIGN.md.
 
-2. **OpenAPI source format: typed TS object vs YAML file?**
+2. **OpenAPI source format: typed TS object vs YAML file?** — RESOLVED: typed TS object chosen per 05-02 Task 2 action.
    - What we know: D-06 allows either (discretion).
    - Recommendation: typed TS object + `openapi-types` (no runtime dep, no `dist` path concern,
      compile-time structural check). Strong default unless the user prefers YAML.
 
-3. **`memory.ts:167` reachability.**
+3. **`memory.ts:167` reachability.** — RESOLVED: investigate-then-test-or-pragma per 05-01 Task 1; disposition recorded in SUMMARY.
    - What we know: it's the only plausible ignore-pragma candidate.
    - Recommendation: attempt a covering test first (D-04 order); only pragma if proven unreachable.
 
