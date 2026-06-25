@@ -23,7 +23,9 @@
 // does NOT override the key extractor.
 
 import express from "express";
+import swaggerUi from "swagger-ui-express";
 
+import { openapiSpec } from "./openapi.js";
 import {
   FixedWindowLimiter,
   MemoryStore,
@@ -104,6 +106,14 @@ export function buildApp(): { app: express.Express; close: () => Promise<void> }
   app.get("/health", (_req, res) => {
     res.status(200).json({ status: "ok" });
   });
+
+  // D-07: docs registered outside the limiter (like /health) so the Swagger UI's
+  // many static-asset requests are never throttled (throttling /docs breaks the
+  // page). Prefix mount only — no bare `*` wildcard (Express-5 path-to-regexp@8 safe).
+  app.get("/openapi.json", (_req, res) => {
+    res.json(openapiSpec);
+  });
+  app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiSpec));
 
   // From here on, every route is rate-limited per req.ip (D4-04: lean on the
   // rateLimit defaults — no key-extractor override).
