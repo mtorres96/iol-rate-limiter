@@ -90,7 +90,11 @@ describe("rateLimit middleware — fail-open/closed on limiter error (HTTP-04)",
     expect(warnings[0]?.obj).toHaveProperty("err");
   });
 
-  it("never produced an unhandled rejection across the suite (T-03-06)", () => {
+  it("never produced an unhandled rejection across the suite (T-03-06)", async () => {
+    // `unhandledRejection` is edge-triggered and fires in a later microtask, so
+    // flush the microtask queue first — otherwise a leaked rejection could land
+    // in `unhandled` AFTER a synchronous assertion had already passed.
+    await Promise.resolve();
     // The error paths above all ran; the policy absorbed every rejection.
     expect(unhandled).toHaveLength(0);
   });
