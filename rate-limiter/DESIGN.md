@@ -252,8 +252,16 @@ brief→evidence map and the complete audit-disposition table (including the one
 `/* v8 ignore */` for a provably-unreachable sliding-window branch) are recorded in
 [COMPLIANCE.md](./COMPLIANCE.md).
 
-This phase deliberately did **not** add logging or metrics — those remain v2-deferred; the
-`DegradedLogger` hook is the seam where a structured logger would attach (see COMPLIANCE.md).
+**Metrics (demo tier).** Metrics **are** now provided — at the **demo tier only**. The demo server
+exposes a prom-client `/metrics` endpoint (`src/demo/metrics.ts` + the unlimited-zone route in
+`src/demo/server.ts`), counting rate-limit decisions via
+`rate_limiter_decisions_total{decision="allowed"|"blocked"}` alongside Node/process defaults, and
+`docker compose up` brings up a **Prometheus + Grafana** stack (the `monitoring/` provisioning tree)
+with a pre-provisioned "Allowed vs Blocked" dashboard. Crucially this leaks **no** observability
+dependency into the core: `prom-client` lives only under `src/demo/**` (same tier rule that keeps
+Express/`ioredis` out of the core), so the shippable library stays framework-agnostic. **Logging
+remains v2-deferred** — the `DegradedLogger` hook is the seam where a structured logger would attach
+(see COMPLIANCE.md).
 
 ---
 
@@ -277,7 +285,7 @@ is the evidence trail.
 **What was human-directed:**
 
 - The **requirements and scope** (what to build, what to leave out — e.g. only three algorithms,
-  no metrics dashboard, no second framework adapter).
+  no second framework adapter; metrics are provided only at the **demo tier**, never in the core).
 - Every **locked design decision** — the algorithm set, the in-memory + Redis store split behind a
   single `Store` interface, atomic Lua, the fail-open default, the delta-seconds header
   convention, the tier boundary. These were decided and recorded **before** implementation in the

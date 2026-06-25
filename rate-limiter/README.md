@@ -80,6 +80,32 @@ OpenAPI spec is **hand-written** (`src/demo/openapi.ts`, no codegen) and the doc
 routes are registered outside the limiter so the UI's static assets are never
 throttled.
 
+### Observability / Metrics
+
+`docker compose up` also starts a small **Prometheus + Grafana** stack alongside the app.
+Three access points:
+
+- **App metrics** — [`http://localhost:3000/metrics`](http://localhost:3000/metrics): the
+  Prometheus **text exposition** served by the demo itself. It exposes the custom counter
+  `rate_limiter_decisions_total{decision="allowed"|"blocked"}` (incremented per `/api/ping`
+  response — `429` ⇒ `blocked`, otherwise `allowed`) plus Node/process default metrics
+  (resident memory, event-loop lag, CPU, …). It is registered in the **unlimited zone**, so
+  it is **never rate-limited** (no `429`) and never consumes the limiter budget.
+- **Prometheus** — [`http://localhost:9090`](http://localhost:9090): scrapes `app:3000/metrics`
+  on the internal compose network every ~5s.
+- **Grafana** — [`http://localhost:3001`](http://localhost:3001): **anonymous, no login**
+  (host port **3001** because the app already uses 3000 → Grafana's container 3000). A
+  pre-provisioned **"Allowed vs Blocked"** dashboard (`rate(rate_limiter_decisions_total[1m])`
+  by `{{decision}}`) plus default-metric panels load automatically.
+
+Fire a few `/api/ping` requests (and trip a `429` as shown above), then watch the allowed/blocked
+lines move in Grafana.
+
+Metrics are **demo-tier only**: all of this lives under `src/demo/**` (`src/demo/metrics.ts` +
+the `/metrics` route in `src/demo/server.ts`). The framework-agnostic **core stays clean** — there
+is **zero `prom-client` in the core or the Express adapter**, exactly like the tier rule that keeps
+`ioredis`/Express out of the core.
+
 ---
 
 ## Configuration
