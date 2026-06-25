@@ -1,0 +1,14 @@
+# Grafana datasource provisioning (demo-tier, OBS-02).
+# Mounted under /etc/grafana/provisioning so Grafana wires the Prometheus datasource
+# on startup with no manual clicks. `prometheus:9090` is the prometheus service on the
+# internal compose network. proxy access = Grafana server proxies queries (browser
+# never needs to reach Prometheus directly).
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true

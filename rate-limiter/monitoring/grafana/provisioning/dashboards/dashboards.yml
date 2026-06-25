@@ -1,0 +1,15 @@
+# Grafana dashboard provider (demo-tier, OBS-02).
+# A file provider that loads every dashboard JSON from /var/lib/grafana/dashboards
+# (the mounted ./monitoring/grafana/dashboards dir), so the "Allowed vs Blocked"
+# dashboard appears automatically with no manual import.
+
+apiVersion: 1
+
+providers:
+  - name: rate-limiter-dashboards
+    type: file
+    disableDeletion: false
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: false

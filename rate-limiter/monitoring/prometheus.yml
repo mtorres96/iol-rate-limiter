@@ -1,0 +1,13 @@
+# Prometheus scrape config for the demo observability stack (OBS-02, demo-tier).
+# Mounted read-only into the prometheus service at /etc/prometheus/prometheus.yml.
+# Scrapes the demo app's /metrics endpoint over the internal compose network, where
+# the app service is reachable as `app:3000` (the same network redis+app share).
+
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: rate-limiter
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["app:3000"]

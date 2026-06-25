@@ -27,3 +27,29 @@ services:
     depends_on:
       redis:
         condition: service_healthy # Wait for Redis PONG, not just container start (D4-05).
+
+  # Demo-tier observability (OBS-02). Prometheus scrapes the app's /metrics endpoint
+  # at `app:3000` over this same compose network every ~5s (config in monitoring/).
+  # Pinned image tag for reproducibility, like redis:7.4-alpine above.
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+
+  # Grafana renders the pre-provisioned "Allowed vs Blocked" dashboard.
+  # HOST port is 3001 → container 3000, because the app already owns host port 3000.
+  # Anonymous Viewer access so the dashboard opens with NO login (demo convenience).
+  grafana:
+    image: grafana/grafana:11.3.0
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Viewer"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
