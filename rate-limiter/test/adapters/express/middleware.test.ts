@@ -96,7 +96,7 @@ describe("rateLimit middleware — admit→429 + headers (HTTP-01/02/03)", () =>
       rateLimit({
         limiter,
         keyGenerator: () => "k1",
-        handler: (_req, res, _d) => res.status(429).json({ custom: true }),
+        handler: (_req, res) => res.status(429).json({ custom: true }),
       }),
     );
     app.get("/", (_req, res) => res.send("ok"));
@@ -164,5 +164,46 @@ describe("rateLimit middleware — headers mode selection (D3-04)", () => {
     expect(ok.headers["x-ratelimit-limit"]).toBeUndefined();
     expect(ok.headers["x-ratelimit-remaining"]).toBeUndefined();
     expect(ok.headers["x-ratelimit-reset"]).toBeUndefined();
+  });
+
+  it('headers: "ietf" emits the IETF RateLimit header but omits X-RateLimit-* (headers.ts ietf-only branch)', async () => {
+    const limiter = oneShotLimiter();
+    const app = express();
+    app.use(rateLimit({ limiter, keyGenerator: () => "k1", headers: "ietf" }));
+    app.get("/", (_req, res) => res.send("ok"));
+
+    const ok = await request(app).get("/");
+
+    expect(ok.status).toBe(200);
+    // IETF List-of-Items headers ARE present in ietf-only mode...
+    expect(ok.headers["ratelimit"]).toMatch(/^default;r=\d+;t=\d+$/);
+    expect(ok.headers["ratelimit-policy"]).toContain("default;q=1");
+    // ...while the legacy X-RateLimit-* triple is suppressed.
+    expect(ok.headers["x-ratelimit-limit"]).toBeUndefined();
+    expect(ok.headers["x-ratelimit-remaining"]).toBeUndefined();
+    expect(ok.headers["x-ratelimit-reset"]).toBeUndefined();
+  });
+
+  it("windowSeconds appends ;w=<n> to RateLimit-Policy (headers.ts windowSeconds ternary)", async () => {
+    const limiter = oneShotLimiter();
+    const app = express();
+    app.use(
+      rateLimit({ limiter, keyGenerator: () => "k1", windowSeconds: 60 }),
+    );
+    app.get("/", (_req, res) => res.send("ok"));
+
+    const ok = await request(app).get("/");
+
+    expect(ok.status).toBe(200);
+    // The `;w=` part is taken ONLY when windowSeconds != null.
+    expect(ok.headers["ratelimit-policy"]).toBe("default;q=1;w=60");
+  });
+});
+
+describe("rateLimit middleware — factory-time validation (D3-01)", () => {
+  it("throws TypeError when `limiter` is missing (middleware.ts limiter==null arm)", () => {
+    // The factory validates options BEFORE returning a handler: a missing
+    // `limiter` fails loud at startup rather than per-request.
+    expect(() => rateLimit({} as never)).toThrow(TypeError);
   });
 });

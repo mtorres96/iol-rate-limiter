@@ -127,12 +127,11 @@ export function start(): void {
   const port = Number(process.env.PORT ?? DEFAULT_PORT);
 
   const server = app.listen(port, () => {
-    // eslint-disable-next-line no-console -- the demo is an app, a startup line is expected.
+    // The demo is an app, so a startup line on stdout is expected and intended.
     console.log(`demo rate-limiter listening on :${port}`);
   });
 
   const shutdown = (signal: string): void => {
-    // eslint-disable-next-line no-console
     console.log(`received ${signal}, shutting down`);
     server.close(() => {
       void close().then(() => process.exit(0));
