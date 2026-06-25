@@ -19,7 +19,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
+    "verify": "npm run typecheck && npm run test",
     "build": "tsup",
+    "start": "node dist/demo/server.js",
+    "dev": "tsx watch src/demo/server.ts",
     "lint": "eslint .",
     "format": "prettier --write ."
   },

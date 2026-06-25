@@ -10,7 +10,7 @@ import { defineConfig } from 'tsup';
 // relative to the BUILT module. tsup bundles `.ts` only, so the `.lua` files
 // must be copied verbatim into `dist/store/lua/` after a successful build.
 export default defineConfig({
-  entry: ['src/index.ts', 'src/adapters/express/index.ts'],
+  entry: ['src/index.ts', 'src/adapters/express/index.ts', 'src/demo/server.ts'],
   format: ['esm'],
   dts: true,
   sourcemap: true,
