@@ -123,7 +123,21 @@ Plans:
   3. `DESIGN.md` documents architecture and trade-offs (why Lua, fixed-window boundary, concurrency justification, fail-open/closed rationale, reset-header convention) with an honest AI-usage section.
   4. A README provides a one-command quickstart with example requests, and a Mermaid architecture/data-flow diagram illustrates the layered design and request path.
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 04-01-PLAN.md — Demo composition-root server (env-driven store+limiter, /health + /api/ping) + tsup demo entry + `verify`/`start` scripts + smoke tests
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 04-02-PLAN.md — Multi-stage non-root `node:24-alpine` Dockerfile + `.dockerignore` + Compose v2 (app + `redis:7.4-alpine`, healthcheck, depends_on service_healthy)
+
+**Wave 3** *(blocked on Wave 2)*
+
+- [ ] 04-03-PLAN.md — DESIGN.md (architecture + locked trade-offs + honest AI-usage) + README (one-command quickstart, 200→429 curl, Docker-required verify note, Mermaid diagrams)
+
 **UI hint**: yes
 
 ## Progress
@@ -137,4 +151,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. Core, Algorithms & In-Memory Reference | 4/4 | Complete   | 2026-06-23 |
 | 2. Conformance, Redis/Lua & Defensive Behavior | 5/5 | Complete   | 2026-06-24 |
 | 3. Express Middleware & HTTP Semantics | 3/3 | Complete   | 2026-06-25 |
-| 4. Demo, Docker & DESIGN.md | 0/TBD | Not started | - |
+| 4. Demo, Docker & DESIGN.md | 0/3 | Not started | - |
