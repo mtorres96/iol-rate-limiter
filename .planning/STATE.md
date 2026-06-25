@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Phase 5 context gathered
-last_updated: "2026-06-25T19:05:59.458Z"
+last_updated: "2026-06-25T21:32:48.967Z"
 last_activity: 2026-06-25
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 18
-  completed_plans: 16
+  completed_plans: 17
   percent: 80
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-06-23)
 ## Current Position
 
 Phase: 05 (quality-swagger-compliance) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-06-25
 
-Progress: [█████████░] 89%
+Progress: [█████████░] 94%
 
 ## Performance Metrics
 
@@ -61,6 +61,7 @@ Progress: [█████████░] 89%
 | Phase 03 P02 | 2 | 3 tasks | 3 files |
 | Phase 03 P03 | 2 | 3 tasks | 3 files |
 | Phase 05 P01 | 5 | 3 tasks | 8 files |
+| Phase 05 P02 | 12 | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -87,6 +88,8 @@ Recent decisions affecting current work:
 - [Phase ?]: [Phase 03]: express is a peerDependency (>=5) + devDep, never a runtime dependency; rate-limiter/express subpath wired via second tsup entry + exports map (source in 03-02, build-smoke in 03-03)
 - [Phase ?]: [Phase 03]: Express adapter under src/adapters/express/** (tier boundary); single toSeconds=ceil(ms/1000) edge helper; IETF draft-11 + legacy headers; middleware-owned fail-open/closed try-catch never leaks to Express error handler; reuses core RateLimitPolicy/DegradedLogger (no new types)
 - [Phase ?]: [Phase 03]: HTTP-01..04 verified via supertest (no Redis); fail-open/closed proven with throwing-stub RateLimiter; build-smoke guards the express subpath; build-green gate green (tsc + 117 tests).
+- [Phase ?]: [Phase 05]: Swagger docs = hand-written typed OpenAPIV3.Document (openapi-types, types-only) over YAML/codegen — tsc structural validation, zero runtime weight (D-06)
+- [Phase ?]: [Phase 05]: swagger-ui-express in dependencies (Docker npm ci --omit=dev); /docs + /openapi.json registered before app.use(rateLimit) so UI assets never throttled (D-07)
 
 ### Pending Todos
 
@@ -106,6 +109,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-25T19:05:59.449Z
+Last session: 2026-06-25T21:32:13.075Z
 Stopped at: Phase 5 context gathered
 Resume file: None
