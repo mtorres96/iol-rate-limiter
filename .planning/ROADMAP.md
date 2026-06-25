@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Core, Algorithms & In-Memory Reference** - Narrow interfaces + three correct algorithms proven against an in-memory store with FakeClock (completed 2026-06-23)
 - [x] **Phase 2: Conformance Harness, Redis/Lua Store & Defensive Behavior** - Shared conformance suite + atomic-Lua Redis store with timeouts and fail-open/closed, proven against real Redis (completed 2026-06-24)
 - [x] **Phase 3: Express Middleware & HTTP Semantics** - Per-key enforcement middleware with standards-correct headers, 429/Retry-After, and async error handling (completed 2026-06-25)
-- [ ] **Phase 4: Demo, Docker & DESIGN.md** - One-command deployable demo + graded architecture/AI-usage documentation behind the final verification gate
+- [x] **Phase 4: Demo, Docker & DESIGN.md** - One-command deployable demo + graded architecture/AI-usage documentation behind the final verification gate (completed 2026-06-25)
 
 ## Phase Details
 
@@ -136,7 +136,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2)*
 
-- [ ] 04-03-PLAN.md — DESIGN.md (architecture + locked trade-offs + honest AI-usage) + README (one-command quickstart, 200→429 curl, Docker-required verify note, Mermaid diagrams)
+- [x] 04-03-PLAN.md — DESIGN.md (architecture + locked trade-offs + honest AI-usage) + README (one-command quickstart, 200→429 curl, Docker-required verify note, Mermaid diagrams)
 
 **UI hint**: yes
 
@@ -151,4 +151,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. Core, Algorithms & In-Memory Reference | 4/4 | Complete   | 2026-06-23 |
 | 2. Conformance, Redis/Lua & Defensive Behavior | 5/5 | Complete   | 2026-06-24 |
 | 3. Express Middleware & HTTP Semantics | 3/3 | Complete   | 2026-06-25 |
-| 4. Demo, Docker & DESIGN.md | 2/3 | In Progress|  |
+| 4. Demo, Docker & DESIGN.md | 3/3 | Complete   | 2026-06-25 |
