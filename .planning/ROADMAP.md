@@ -94,7 +94,21 @@ Plans:
   2. Rate-limit headers (IETF `RateLimit`/`RateLimit-Policy` + legacy `X-RateLimit-*`) are emitted on both allowed and rejected responses, with integer `remaining` and a consistent `reset` unit.
   3. A store error or timeout is handled without crashing the request, honoring the configured fail-open/closed policy (verified via supertest).
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 03-01-PLAN.md — Install adapter devDeps (gated) + wire the `rate-limiter/express` subpath (tsup entry + package.json exports)
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 03-02-PLAN.md — Adapter source: headers.ts (IETF draft-11 + legacy) + rateLimit() factory with fail-open/closed policy + adapter barrel
+
+**Wave 3** *(blocked on Wave 2)*
+
+- [ ] 03-03-PLAN.md — supertest suites (HTTP-01..04, throwing-stub fail-open/closed) + build-smoke subpath assertion (build-green gate)
+
 **UI hint**: yes
 
 ### Phase 4: Demo, Docker & DESIGN.md
@@ -122,5 +136,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 |-------|----------------|--------|-----------|
 | 1. Core, Algorithms & In-Memory Reference | 4/4 | Complete   | 2026-06-23 |
 | 2. Conformance, Redis/Lua & Defensive Behavior | 5/5 | Complete   | 2026-06-24 |
-| 3. Express Middleware & HTTP Semantics | 0/TBD | Not started | - |
+| 3. Express Middleware & HTTP Semantics | 0/3 | Not started | - |
 | 4. Demo, Docker & DESIGN.md | 0/TBD | Not started | - |
