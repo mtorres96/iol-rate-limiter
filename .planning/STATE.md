@@ -104,6 +104,7 @@ None yet.
 | ID | Description | Date | Commit | Link |
 |----|-------------|------|--------|------|
 | 260625-qji | Make demo rate-limiter window/limit configurable via env vars (RL_LIMIT / RL_WINDOW_MS / RL_REFILL) | 2026-06-25 | a308416 | [260625-qji-make-demo-rate-limiter-window-and-limit-](./quick/260625-qji-make-demo-rate-limiter-window-and-limit-/) |
+| 260625-qz8 | Shell-overridable RL env vars in docker-compose (`${VAR:-default}`) + document 3 docker config-override commands | 2026-06-25 | 80338ef | [260625-qz8-make-docker-compose-rl-env-vars-shell-ov](./quick/260625-qz8-make-docker-compose-rl-env-vars-shell-ov/) |
 
 ### Blockers/Concerns
 
