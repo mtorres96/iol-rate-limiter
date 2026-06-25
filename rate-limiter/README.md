@@ -85,16 +85,28 @@ throttled.
 ## Configuration
 
 The demo is configured entirely through environment variables (read once at startup; an invalid
-`RL_ALGO` fails loud with a `RangeError`):
+`RL_ALGO`, or a present-but-non-numeric `RL_LIMIT` / `RL_WINDOW_MS` / `RL_REFILL`, fails loud with
+an error at startup):
 
-| Env var     | Default        | Effect                                                                                          |
-|-------------|----------------|-------------------------------------------------------------------------------------------------|
-| `REDIS_URL` | *(unset)*      | When set, uses the distributed **`RedisStore`** at that URL. When **unset**, falls back to the in-memory **`MemoryStore`** — so the demo runs with **zero Docker**. |
-| `RL_ALGO`   | `token-bucket` | Which algorithm to enforce: `token-bucket` \| `sliding-window` \| `fixed-window`.                |
-| `PORT`      | `3000`         | HTTP listen port.                                                                               |
+| Env var        | Default          | Effect                                                                                          |
+|----------------|------------------|-------------------------------------------------------------------------------------------------|
+| `REDIS_URL`    | *(unset)*        | When set, uses the distributed **`RedisStore`** at that URL. When **unset**, falls back to the in-memory **`MemoryStore`** — so the demo runs with **zero Docker**. |
+| `RL_ALGO`      | `token-bucket`   | Which algorithm to enforce: `token-bucket` \| `sliding-window` \| `fixed-window`.                |
+| `RL_LIMIT`     | `5`              | Allowed budget per window. Token Bucket: `capacity`. Sliding/Fixed Window: `limit`.             |
+| `RL_WINDOW_MS` | `60000`          | Refill interval / window length in ms. Token Bucket: `intervalMs`. Sliding/Fixed Window: `windowMs`. |
+| `RL_REFILL`    | `= RL_LIMIT`     | **Token Bucket only:** tokens refilled per interval (`refillPerInterval`). Ignored by the window algorithms. |
+| `PORT`         | `3000`           | HTTP listen port.                                                                               |
 
-Under `docker compose up`, Compose sets `REDIS_URL=redis://redis:6379` (the real distributed path)
-and `RL_ALGO=token-bucket`.
+Override the limit/window at run time without rebuilding, e.g.:
+
+```bash
+docker run -e RL_LIMIT=10 -e RL_WINDOW_MS=10000 <image>
+```
+
+The same vars can be edited in the `app.environment` block of `docker-compose.yml`.
+
+Under `docker compose up`, Compose sets `REDIS_URL=redis://redis:6379` (the real distributed path),
+`RL_ALGO=token-bucket`, and the tunable `RL_LIMIT` / `RL_WINDOW_MS` / `RL_REFILL` defaults.
 
 ### Run standalone, without Docker
 
