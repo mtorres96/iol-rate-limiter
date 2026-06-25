@@ -26,6 +26,7 @@ import express from "express";
 import swaggerUi from "swagger-ui-express";
 
 import { openapiSpec } from "./openapi.js";
+import { register, recordDecision } from "./metrics.js";
 import {
   FixedWindowLimiter,
   MemoryStore,
@@ -143,9 +144,36 @@ export function buildApp(): { app: express.Express; close: () => Promise<void> }
   });
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiSpec));
 
+  // /metrics is registered HERE (unlimited zone, like /health and /docs) so the
+  // Prometheus scraper polling every ~5s never consumes the limiter budget and is
+  // never throttled — and so it is never itself counted as a rate-limit decision
+  // (the decision hook below only sits on the rate-limited zone). It serves the
+  // prom-client text exposition. Be explicit about the async path: Express 5 would
+  // propagate a rejected promise to the error handler, but a try/catch → 500 keeps
+  // the failure local and matches this file's fail-loud style.
+  app.get("/metrics", async (_req, res) => {
+    try {
+      res.setHeader("Content-Type", register.contentType);
+      res.send(await register.metrics());
+    } catch {
+      res.status(500).end();
+    }
+  });
+
   // From here on, every route is rate-limited per req.ip (D4-04: lean on the
   // rateLimit defaults — no key-extractor override).
   app.use(rateLimit({ limiter }));
+
+  // Decision-recording hook (demo-tier metrics): the limiter above has already
+  // decided by the time the response finishes, so statusCode 429 ⇒ "blocked",
+  // otherwise "allowed". /metrics itself sits in the unlimited zone above, so it is
+  // never counted here. res.on("finish") keeps this out of the response hot path.
+  app.use((_req, res, next) => {
+    res.on("finish", () =>
+      recordDecision(res.statusCode === 429 ? "blocked" : "allowed"),
+    );
+    next();
+  });
 
   app.get("/api/ping", (_req, res) => {
     res.status(200).json({ pong: true });
