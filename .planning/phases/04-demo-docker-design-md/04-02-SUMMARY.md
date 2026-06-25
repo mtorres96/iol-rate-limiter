@@ -134,6 +134,11 @@ None - no external service configuration required. Docker is a documented prereq
 - The Dockerfile and compose file are the canonical artifacts for the DELIV-06 README quickstart and the DELIV-04 DESIGN.md container-hardening narrative.
 - No blockers.
 
+## Self-Check: PASSED
+
+- Files verified present: Dockerfile, .dockerignore, docker-compose.yml, 04-02-SUMMARY.md
+- Commits verified: 5c8b30c, d104a68, d657892, cadc930, 0fdeb2a
+
 ---
 *Phase: 04-demo-docker-design-md*
 *Completed: 2026-06-25*
