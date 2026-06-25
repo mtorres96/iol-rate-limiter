@@ -16,15 +16,33 @@ import { beforeAll, describe, expect, it } from "vitest";
 const pkgRoot = fileURLToPath(new URL("..", import.meta.url));
 const luaScripts = ["token-bucket.lua", "sliding-window.lua", "fixed-window.lua"];
 
-describe("build ships the Lua assets into dist", () => {
+// The Express adapter ships as a SECOND tsup entry + the `./express` subpath in
+// `package.json` `exports` (wired in plan 03-01). These are the built artifacts
+// that subpath must resolve to.
+const expressSubpathAssets = [
+  "adapters/express/index.js",
+  "adapters/express/index.d.ts",
+];
+
+describe("build ships the assets into dist", () => {
   beforeAll(() => {
     // Run the real production build (tsup). The `onSuccess` hook copies the
-    // `.lua` files into `dist/store/lua/`.
+    // `.lua` files into `dist/store/lua/`, and the second entry emits the Express
+    // adapter into `dist/adapters/express/`.
     execFileSync("npm", ["run", "build"], { cwd: pkgRoot, stdio: "inherit" });
   }, 120_000);
 
   it.each(luaScripts)("dist/store/lua/%s exists and is non-empty", (script) => {
     const path = fileURLToPath(new URL(`../dist/store/lua/${script}`, import.meta.url));
+    const contents = readFileSync(path, "utf8");
+    expect(contents.length).toBeGreaterThan(0);
+  });
+
+  // Guards plan 03-01's second tsup entry + the `./express` export: a broken or
+  // missing second-entry wiring would ship a `rate-limiter/express` subpath that
+  // resolves to a non-existent file (T-03-07).
+  it.each(expressSubpathAssets)("dist/%s exists and is non-empty", (asset) => {
+    const path = fileURLToPath(new URL(`../dist/${asset}`, import.meta.url));
     const contents = readFileSync(path, "utf8");
     expect(contents.length).toBeGreaterThan(0);
   });
