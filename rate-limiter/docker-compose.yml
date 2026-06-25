@@ -1,0 +1,26 @@
+# Compose v2 (no obsolete top-level `version:` key).
+# `docker compose up` builds the app image, starts Redis with a healthcheck, waits
+# for it to report healthy, then runs the demo against the real distributed Redis path.
+
+services:
+  redis:
+    image: redis:7.4-alpine
+    # No host port mapping: Redis is reachable only on the internal compose network.
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  app:
+    build: .
+    init: true # PID-1 signal forwarding so SIGTERM triggers graceful shutdown.
+    environment:
+      REDIS_URL: redis://redis:6379 # Real distributed path under compose (D4-01).
+      PORT: "3000"
+      RL_ALGO: token-bucket # Default algorithm; switchable across the three limiters.
+    ports:
+      - "3000:3000"
+    depends_on:
+      redis:
+        condition: service_healthy # Wait for Redis PONG, not just container start (D4-05).
