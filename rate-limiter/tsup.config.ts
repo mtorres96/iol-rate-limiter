@@ -6,9 +6,11 @@ import { defineConfig } from 'tsup';
 // NOTE: tsdown migration is intentionally declined — CLAUDE.md locks tsup.
 //
 // Asset copy (STOR-02): the RedisStore loads its Lua scripts at runtime via
-// `readFileSync(new URL('./lua/<algo>.lua', import.meta.url))`, which resolves
-// relative to the BUILT module. tsup bundles `.ts` only, so the `.lua` files
-// must be copied verbatim into `dist/store/lua/` after a successful build.
+// `readFileSync(new URL('./lua/<algo>.lua', import.meta.url))`. tsup hoists the
+// store code into a shared top-level chunk in `dist/`, so `import.meta.url`
+// resolves `./lua/` to `dist/lua/` (NOT `dist/store/lua/`). The `.lua` files
+// must therefore be copied verbatim into `dist/lua/` after a successful build,
+// or the real-Redis path throws ENOENT in the built image.
 export default defineConfig({
   entry: ['src/index.ts', 'src/adapters/express/index.ts', 'src/demo/server.ts'],
   format: ['esm'],
@@ -17,6 +19,6 @@ export default defineConfig({
   clean: true,
   target: 'node24',
   onSuccess: async () => {
-    cpSync('src/store/lua', 'dist/store/lua', { recursive: true });
+    cpSync('src/store/lua', 'dist/lua', { recursive: true });
   },
 });
