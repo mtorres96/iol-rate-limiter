@@ -49,6 +49,19 @@ A `Decision` (`{ allowed, limit, remaining, resetMs, retryAfterMs }`) is the sin
 crosses the limiter → adapter boundary. All time fields are **integer milliseconds**; the
 conversion to HTTP delta-seconds happens in exactly one place (see §6).
 
+### Request flow (sequence diagram)
+
+![Hand-drawn sequence diagram of the rate-limiter request flow: client → backend → Redis per-window counter](./docs/request-flow.png)
+
+This is the author's own **hand-drawn** sequence diagram of the request path (its labels are in
+**Spanish**). A client issues `GET /ping`; the backend (TypeScript) increments a **per-window
+counter** in Redis (`contador` = 0, 1, 2, …). While the counter is within the limit
+(`0 ≤ contador ≤ n`) the backend returns **200/OK**; once the counter exceeds the limit
+(`contador = n + 1 ⇒ contador > n`) it returns **429** with `Retry-After` for the remainder of the
+window — the red dashed arrow ("devuelvo error por X tiempo"). It is the human-authored companion to
+the Mermaid request-path diagram in the README, making the per-window counter / 200→429 story
+tangible.
+
 ---
 
 ## 2. Why atomic Lua (no round-trip races)

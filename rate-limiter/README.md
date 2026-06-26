@@ -239,6 +239,9 @@ flowchart LR
   D -->|no| NO["429 + Retry-After + headers"]
 ```
 
+See also the author's hand-drawn **request-flow** sequence diagram in
+[DESIGN.md](./DESIGN.md#request-flow-sequence-diagram).
+
 ---
 
 ## Deployment note (behind a proxy)
