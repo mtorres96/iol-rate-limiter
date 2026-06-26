@@ -14,12 +14,22 @@ an **Express** middleware adapter, and a demo HTTP server — deployable with on
 From this `rate-limiter/` directory:
 
 ```bash
-docker compose up
+docker compose up --build
 ```
 
-That builds the app image, starts **Redis** (`redis:7.4-alpine`) with a healthcheck, waits for it
-to be healthy, and runs the demo against the **real distributed Redis path**. The app then listens
-on **http://localhost:3000**.
+That **single command** builds the app image and brings the **whole stack** up working out of the
+box — no extra setup, import, or manual configuration. It starts and wires together:
+
+- **App** — [http://localhost:3000](http://localhost:3000) (Swagger UI at
+  [`/docs`](http://localhost:3000/docs), Prometheus metrics at
+  [`/metrics`](http://localhost:3000/metrics)).
+- **Redis** (`redis:7.4-alpine`) — healthchecked; the demo waits for it and runs against the
+  **real distributed Redis path** (internal network only, not exposed on the host).
+- **Prometheus** — [http://localhost:9090](http://localhost:9090): scrapes the app's `/metrics`.
+- **Grafana** — [http://localhost:3001](http://localhost:3001): opens **directly** on the
+  pre-provisioned **"Rate Limiter — Allowed vs Blocked"** dashboard (no login, no navigation).
+
+(See [Observability / Metrics](#observability--metrics) below for the full detail.)
 
 Two routes:
 
