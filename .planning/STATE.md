@@ -107,6 +107,7 @@ None yet.
 | 260625-qz8 | Shell-overridable RL env vars in docker-compose (`${VAR:-default}`) + document 3 docker config-override commands | 2026-06-25 | 80338ef | [260625-qz8-make-docker-compose-rl-env-vars-shell-ov](./quick/260625-qz8-make-docker-compose-rl-env-vars-shell-ov/) |
 | 260625-s2j | Metrics nice-to-have: prom-client `/metrics` + Prometheus/Grafana stack + dashboard; docs/COMPLIANCE updated (OBS-02 delivered). Fix: count blocked decisions | 2026-06-25 | 0b42f74 | [260625-s2j-add-prom-client-metrics-endpoint-and-pro](./quick/260625-s2j-add-prom-client-metrics-endpoint-and-pro/) |
 | 260625-skt | Grafana opens directly on the provisioned "Allowed vs Blocked" dashboard (GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH) | 2026-06-25 | 014aabc | [260625-skt-set-provisioned-grafana-dashboard-as-def](./quick/260625-skt-set-provisioned-grafana-dashboard-as-def/) |
+| 260625-tce | Add author hand-drawn request-flow sequence diagram to DESIGN.md (docs/request-flow.png) + explicit one-command full-stack Quickstart | 2026-06-25 | e7101b5 | [260625-tce-add-author-sequence-diagram-to-docs-and-](./quick/260625-tce-add-author-sequence-diagram-to-docs-and-/) |
 
 ### Blockers/Concerns
 
